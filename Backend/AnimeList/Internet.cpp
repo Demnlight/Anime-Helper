@@ -53,9 +53,9 @@ std::string CInternet::GetUrlData(std::string host, std::string url)
 
 void CInternet::DownloadImage(int index)
 {
-    std::string outputname = Xorstr("Settings/");
-    outputname += g_Globals->AllAnimeList.at(index).name;
-    outputname += Xorstr(".jpg");
+	std::string outputname = Xorstr("Settings/");
+	outputname += g_Globals->AllAnimeList.at(index).name;
+	outputname += Xorstr(".jpg");
 
 	if (URLDownloadToFile(NULL, g_Globals->AllAnimeList.at(index).image_url.c_str(), outputname.c_str(), 0, NULL) == S_OK)
 	{
@@ -64,7 +64,6 @@ void CInternet::DownloadImage(int index)
 		g_Logger->ResetColor();
 
 		printf(" ImageUrl: %s | OutputName: %s \n", g_Globals->AllAnimeList.at(index).image_url.c_str(), outputname.c_str());
-
 	}
 	else
 	{
@@ -97,6 +96,11 @@ void CInternet::ParseAnimeListAndImages()
 {
 	std::string page = GetUrlData(Xorstr("animehelper.000webhostapp.com"), Xorstr(""));
 
+	//std::vector<std::string> sites;
+	//std::vector<std::string> names;
+	//std::vector<std::string> image_urls;
+
+	
 	static int m = 0;
 	for (int i = 0; i < 100; i++)
 	{
@@ -120,7 +124,7 @@ void CInternet::ParseAnimeListAndImages()
 				printf("[ Parser ]");
 				g_Logger->ResetColor();
 
-				printf(" [ ParserCurrentAnimePage ]       %s \n", imageurl.c_str());
+				printf(" [ ParserCurrentAnimePage ] %s \n", imageurl.c_str());
 
 				m += 1;
 			}
@@ -139,6 +143,10 @@ void CInternet::ParseAnimeListAndImages()
 				}
 				nameurl.erase(nameurl.end());
 
+				for (int i = 0; i < nameurl.length(); i++)
+					if (nameurl.at(i) == '?')
+						nameurl.erase(nameurl.begin() + i);
+
 				if (!IsArrayHaveElementWithThisName(nameurl))
 					g_Globals->ParserAnimeListNames.push_back(nameurl);
 
@@ -146,12 +154,13 @@ void CInternet::ParseAnimeListAndImages()
 				printf("[ Parser ]");
 				g_Logger->ResetColor();
 
-				printf(" [ ParserAnimeListNames ]         %s \n", nameurl.c_str());
+				printf(" [ ParserAnimeListNames ]   %s \n", nameurl.c_str());
 
 				a += 1;
 			}
 		}
 	}
+	printf("[ Parser ] Final parse page \n");
 
 	//find image url for anime
 	for (int i = 0; i < g_Globals->ParserAnimeListNames.size(); i++)
@@ -175,7 +184,7 @@ void CInternet::ParseAnimeListAndImages()
 			if (!IsArrayHaveElementWithThisName(imageurl))
 			{
 				g_Globals->ParserImagesAnime.push_back(imageurl);
-				printf("[ Parser ][ ImageUrl ][Iter: %i]       %s | %s \n", i, imageurl.c_str(), g_Globals->ParserAnimeListNames.at(i).c_str());
+				printf("[ Parser ][ ImageUrl ][Iter: %i] %s | %s \n", i, imageurl.c_str(), g_Globals->ParserAnimeListNames.at(i).c_str());
 
 			}
 			else
@@ -190,8 +199,10 @@ void CInternet::ParseAnimeListAndImages()
 		Sleep(200);
 	}
 
+	printf("[ Parser ] Final parse images | arraysize: %i \n", g_Globals->ParserImagesAnime.size());
+
 	//setup anime list
-	/*for (int i = 0; i < g_Globals->ParserAnimeListNames.size(); i++)
+	for (int i = 0; i < g_Globals->ParserAnimeListNames.size(); i++)
 	{
 		AnimeList anime;
 		anime.name = g_Globals->ParserAnimeListNames.at(i);
@@ -203,8 +214,8 @@ void CInternet::ParseAnimeListAndImages()
 		printf("[ Parser ]");
 		g_Logger->ResetColor();
 
-		printf(" [ AllAnimeList ]        %s \n", anime.name.c_str());
-	}*/
+		printf(" [ AllAnimeList ] %s \n", anime.name.c_str());
+	}
 }
 
 void CInternet::ParseDescription()

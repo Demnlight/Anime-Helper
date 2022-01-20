@@ -7,86 +7,35 @@
 #include <fstream>
 #include <algorithm>
 #include <D3dx9tex.h>
-#include <thread>
 
 #pragma comment(lib, "D3dx9")
 
-void ThreadSetupAnimeList()
-{
-    while (true)
-    {
-        static int old_size = 0;
-        if (old_size == g_Globals->ParserAnimeListNames.size())
-        {
-            g_Logger->SetColor(COLOR_DEBUG);
-            printf("[ Logger ]");
-            g_Logger->ResetColor();
-
-            printf(" [ SetupAnimeList ] old_array = new_array \n");
-            Sleep(1000);
-            continue;
-        }
-
-        //setup anime list
-        for (int i = 0; i < g_Globals->ParserImagesAnime.size(); i++)
-        {
-            AnimeList anime;
-            anime.name = g_Globals->ParserAnimeListNames.at(i);
-            anime.site_url = g_Globals->ParserCurrentAnimePage.at(i);
-            anime.image_url = g_Globals->ParserImagesAnime.at(i);
-            g_Globals->AllAnimeList.push_back(anime);
-
-            g_Logger->SetColor(COLOR_DEBUG);
-            printf("[ Parser ]");
-            g_Logger->ResetColor();
-
-            printf(" [ AllAnimeList ]        %s \n", anime.name.c_str());
-        }
-        old_size = g_Globals->ParserAnimeListNames.size();
-    }
-}
-void ThreadDownloadImage()
-{
-    while (true)
-    {
-        static int old_size = 0;
-        if (old_size == g_Globals->AllAnimeList.size())
-        {
-            g_Logger->SetColor(COLOR_DEBUG);
-            printf("[ Logger ]");
-            g_Logger->ResetColor();
-
-            printf(" [ DownloadImage ] old_array = new_array \n");
-            Sleep(1000);
-            continue;
-        }
-
-        for (int i = 0; i < g_Globals->AllAnimeList.size(); i++)
-            g_Internet->DownloadImage(i);
-
-        old_size = g_Globals->AllAnimeList.size();
-    }
-}
-void ThreadPushAnimeList()
-{
-    if (g_AnimeList->PushAnimeList() == RETURN_NO_FILE)
-    {
-        g_Internet->ParseAnimeListAndImages();
-        g_AnimeList->SaveAnimeList();
-    }
-}
 void C_Globals::Init()
 {
+
     g_Globals->CheckVersion();
 
-    std::thread PushAnimeList(ThreadPushAnimeList);
-    std::thread SetupAnimeList(ThreadSetupAnimeList);
-    std::thread DownloadImage(ThreadDownloadImage);
+    g_Logger->SetColor(COLOR_DEBUG);
+    printf("[ Logger ]");
+    g_Logger->ResetColor();
 
-    SetupAnimeList.join();
-    DownloadImage.join();
-    PushAnimeList.join();
+    printf(" Start PushAnimeList \n");
+    if (g_AnimeList->PushAnimeList() == RETURN_NO_FILE)
+    {
+        g_Logger->SetColor(COLOR_DEBUG);
+        printf("[ Logger ]");
+        g_Logger->ResetColor();
 
+        printf(" Start ParseAnimeListAndImages \n");
+        g_Internet->ParseAnimeListAndImages();
+
+        g_Logger->SetColor(COLOR_DEBUG);
+        printf("[ Logger ]");
+        g_Logger->ResetColor();
+
+        printf(" Start SaveAnimeList \n");
+        g_AnimeList->SaveAnimeList();
+    }
     //clear array from repetitions
     /*{
         for (int m = 0; m < g_Globals->AllAnimeList.size(); m++)
@@ -100,6 +49,14 @@ void C_Globals::Init()
             }
         }
     }*/
+
+    g_Logger->SetColor(COLOR_DEBUG);
+    printf("[ Logger ]");
+    g_Logger->ResetColor();
+
+    printf(" Start DownloadImage \n");
+    for (int i = 0; i < g_Globals->AllAnimeList.size(); i++)
+        g_Internet->DownloadImage(i);
 }
 
 void C_Globals::CheckVersion()
@@ -107,8 +64,19 @@ void C_Globals::CheckVersion()
     auto loader_version = g_Internet->GetUrlData(Xorstr("animehelper.000webhostapp.com"), Xorstr("version.php"));
     std::string version = Xorstr("1.002");
 
+    g_Logger->SetColor(COLOR_DEBUG);
+    printf("[ Check Version ]");
+    g_Logger->ResetColor();
+
+    printf(" Current Version: %s | Server Version: %s \n", version.c_str(), loader_version.c_str());
+
     if (loader_version != version)
     {
+        g_Logger->SetColor(COLOR_DEBUG);
+        printf("[ Check Version ]");
+        g_Logger->ResetColor();
+        printf(" Update \n");
+
         if (MessageBox(nullptr, Xorstr("Version Oudated, Please wait"), Xorstr("Version outdated"), 0))
         {
             std::remove(Xorstr("delete.exe"));
