@@ -32,7 +32,7 @@ public:
 
 	std::string AutomaticNewStroke(std::string label, int window_size_x);
 
-	LPDIRECT3DTEXTURE9 GetTexture(int index);
+	LPDIRECT3DTEXTURE9 GetTexture(std::vector<AnimeList>* arr, int index);
 
 	LPDIRECT3DDEVICE9        g_pd3dDevice;
 	D3DPRESENT_PARAMETERS    g_d3dpp;

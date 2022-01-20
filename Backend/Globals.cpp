@@ -155,20 +155,20 @@ bool LoadTextureFromFile(const char* filename, PDIRECT3DTEXTURE9* out_texture, i
     return true;
 }
 
-LPDIRECT3DTEXTURE9 C_Globals::GetTexture(int index)
+LPDIRECT3DTEXTURE9 C_Globals::GetTexture(std::vector<AnimeList>* arr, int index)
 {
     int my_image_width = 0;
     int my_image_height = 0;
-    if (!g_Globals->AllAnimeList.at(index).texture)
+    if (!arr->at(index).texture)
     {
-        std::string full_patch = "Settings/" + g_Globals->AllAnimeList.at(index).name + ".jpg";
-        bool ret = LoadTextureFromFile(full_patch.c_str(), &g_Globals->AllAnimeList.at(index).texture, &my_image_width, &my_image_height);
+        std::string full_patch = "Settings/" + arr->at(index).name + ".jpg";
+        bool ret = LoadTextureFromFile(full_patch.c_str(), &arr->at(index).texture, &my_image_width, &my_image_height);
 
         if (ret)
-            return g_Globals->AllAnimeList.at(index).texture;
+            return arr->at(index).texture;
         else
             return nullptr;
     }
     else
-        return g_Globals->AllAnimeList.at(index).texture;
+        return arr->at(index).texture;
 }

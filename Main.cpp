@@ -157,7 +157,7 @@ void Drawing()
 
                             for (int i = 0; i < g_Globals->AllAnimeList.size(); i++)
                             {
-                                auto texture = g_Globals->GetTexture(i);
+                                auto texture = g_Globals->GetTexture(&g_Globals->AllAnimeList, i);
                                 if (ImGui::CustomButtonImage(g_Globals->AllAnimeList.at(i).name.c_str(), g_Globals->AllAnimeList.at(i).desc.c_str(), ImVec2(200, 320), !texture, texture, i))
                                 {
                                     g_AnimeList->SaveAnimeList();
@@ -258,6 +258,7 @@ void Drawing()
 
                         static int ProgressTab = 0;
                         static std::string CurrentSelectedName = Xorstr("CurrentSelectedIndex");
+                        static int CurrentSelectedIndex = 0;
                         if (ProgressTab == 0)
                         {
                             ImGui::SetNextWindowPos(ImVec2(wp.x + 160, wp.y + 40));
@@ -265,11 +266,11 @@ void Drawing()
 
                             for (int i = 0; i < g_Globals->AnimeFavorites.size(); i++)
                             {
-                                auto texture = g_Globals->GetTexture(g_Globals->FindInMainArrayIndexByName(g_Globals->AnimeFavorites.at(i).name, g_Globals->AllAnimeList));
+                                auto texture = g_Globals->GetTexture(&g_Globals->AnimeFavorites, i);
                                 if (ImGui::CustomButtonImage(g_Globals->AnimeFavorites.at(i).name.c_str(), g_Globals->AnimeFavorites.at(i).desc.c_str(), ImVec2(200, 320), !texture, texture, i, 1))
                                 {
                                     ProgressTab = 1;
-                                    CurrentSelectedName = g_Globals->AnimeFavorites.at(i).name;
+                                    CurrentSelectedIndex = i;
                                     g_AnimeList->SaveAnimeList();
                                 }
 
@@ -288,7 +289,7 @@ void Drawing()
                             ImGui::SetNextWindowPos(ImVec2(wp.x + 160, wp.y + 40));
                             ImGui::BeginChild(Xorstr("Image"), ImVec2(200, ws.y - 40));
 
-                            auto texture = g_Globals->GetTexture(g_Globals->FindInMainArrayIndexByName(g_Globals->AnimeFavorites.at(g_Globals->FindInMainArrayIndexByName(CurrentSelectedName, g_Globals->AnimeFavorites)).name, g_Globals->AllAnimeList));
+                            auto texture = g_Globals->GetTexture(&g_Globals->AnimeFavorites, CurrentSelectedIndex);
 
                             ImGui::Image(texture, ImVec2(200, 320));
                             ImGui::EndChild();
@@ -318,7 +319,7 @@ void Drawing()
                             if (ImGui::IsKeyPressedMap(ImGuiKey_Escape))
                             {
                                 g_AnimeList->SaveAnimeList();
-                                CurrentSelectedName = "";
+                                CurrentSelectedIndex = 0;
 
                                 ProgressTab = 0;
                             }
