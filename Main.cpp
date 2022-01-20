@@ -13,10 +13,7 @@
 void Security()
 {
 #if _DEBUG
-    ::AllocConsole();
-    freopen_s(reinterpret_cast<FILE**>(stdin), "CONIN$", "r", stdin);
-    freopen_s(reinterpret_cast<FILE**>(stdout), "CONOUT$", "w", stdout);
-    ::SetConsoleTitleA("Logger");
+    g_Logger->StartUp();
 #endif // _DEBUG
 
     g_Security->Init();
@@ -373,8 +370,7 @@ void Drawing()
     UnregisterClass(wc.lpszClassName, wc.hInstance);
 
 #if _DEBUG
-    ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
-    ::FreeConsole();
+    g_Logger->Detach();
 #endif // _DEBUG
 }
 
