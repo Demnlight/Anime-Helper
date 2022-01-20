@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ImGui\imgui.cpp" />
+    <ClCompile Include="ImGui\imgui_demo.cpp" />
+    <ClCompile Include="ImGui\imgui_draw.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Backend\AnimeList\AnimeListBox.cpp" />
+    <ClCompile Include="Backend\Globals.cpp" />
+    <ClCompile Include="Backend\AnimeList\Internet.cpp" />
+    <ClCompile Include="Backend\User\User.cpp" />
+    <ClCompile Include="Security\Security.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ImGui\imconfig.h" />
+    <ClInclude Include="ImGui\imgui.h" />
+    <ClInclude Include="ImGui\imgui_impl_dx9.h" />
+    <ClInclude Include="ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="ImGui\imgui_internal.h" />
+    <ClInclude Include="ImGui\imstb_rectpack.h" />
+    <ClInclude Include="ImGui\imstb_textedit.h" />
+    <ClInclude Include="ImGui\imstb_truetype.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="Backend\AnimeList\AnimeListBox.h" />
+    <ClInclude Include="Backend\Globals.h" />
+    <ClInclude Include="Data\json.hpp" />
+    <ClInclude Include="Security\lazy_importer.hpp" />
+    <ClInclude Include="Security\xorstr.hpp" />
+    <ClInclude Include="Data\fontbytearray.h" />
+    <ClInclude Include="Curl\include\curl\curl.h" />
+    <ClInclude Include="Curl\include\curl\curlver.h" />
+    <ClInclude Include="Curl\include\curl\easy.h" />
+    <ClInclude Include="Curl\include\curl\mprintf.h" />
+    <ClInclude Include="Curl\include\curl\multi.h" />
+    <ClInclude Include="Curl\include\curl\options.h" />
+    <ClInclude Include="Curl\include\curl\stdcheaders.h" />
+    <ClInclude Include="Curl\include\curl\system.h" />
+    <ClInclude Include="Curl\include\curl\typecheck-gcc.h" />
+    <ClInclude Include="Curl\include\curl\urlapi.h" />
+    <ClInclude Include="Backend\User\User.h" />
+    <ClInclude Include="Security\Security.h" />
+    <ClInclude Include="Backend\Logger.h" />
+  </ItemGroup>
+</Project>
