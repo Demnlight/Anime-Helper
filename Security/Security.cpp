@@ -367,9 +367,6 @@ void DoCheck()
 		if (pPeb->BeingDebugged)
 			ExitProcess(0);
 
-		if (!SecurityCheck())
-			ExitProcess(0);
-
 		Sleep(500);
 	}
 }
