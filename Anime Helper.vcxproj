@@ -72,13 +72,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>Musor</IntDir>
-    <ExternalIncludePath>E:\1Work\Anime Helper\d3d9;E:\1Work\Anime Helper\Gumbo;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>E:\1Work\Anime Helper\d3d9;E:\1Work\Anime Helper\Gumbo;$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>E:\1Work\d3d9;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>E:\1Work\d3d9;$(LibraryPath)</LibraryPath>
     <TargetName>AnimeHelper</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ExternalIncludePath>E:\1Work\Anime Helper\d3d9;E:\1Work\Anime Helper\Gumbo;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>E:\1Work\Anime Helper\d3d9;E:\1Work\Anime Helper\Gumbo;$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>E:\1Work\d3d9;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>E:\1Work\d3d9;$(LibraryPath)</LibraryPath>
     <IntDir>Musor</IntDir>
     <TargetName>AnimeHelper</TargetName>
   </PropertyGroup>
