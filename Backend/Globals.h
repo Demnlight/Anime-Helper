@@ -40,6 +40,9 @@ public:
 
 
 	std::vector<CUser> Users;
+
+	void RegisterNewUser(std::string name, std::string link, std::string avalink);
+	CUser* ParseDataForCurrentUser(std::string name);
 };
 
 inline C_Globals* g_Globals = new C_Globals();

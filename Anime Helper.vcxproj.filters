@@ -13,6 +13,7 @@
     <ClCompile Include="Backend\AnimeList\Internet.cpp" />
     <ClCompile Include="Backend\User\User.cpp" />
     <ClCompile Include="Security\Security.cpp" />
+    <ClCompile Include="Security\base64.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imconfig.h" />
@@ -43,5 +44,6 @@
     <ClInclude Include="Backend\User\User.h" />
     <ClInclude Include="Security\Security.h" />
     <ClInclude Include="Backend\Logger.h" />
+    <ClInclude Include="Security\base64.h" />
   </ItemGroup>
 </Project>
