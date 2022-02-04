@@ -14,6 +14,8 @@
     <ClCompile Include="Backend\User\User.cpp" />
     <ClCompile Include="Security\Security.cpp" />
     <ClCompile Include="Security\base64.cpp" />
+    <ClCompile Include="Backend\Menu\Menu.cpp" />
+    <ClCompile Include="Backend\Server\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImGui\imconfig.h" />
@@ -45,5 +47,9 @@
     <ClInclude Include="Security\Security.h" />
     <ClInclude Include="Backend\Logger.h" />
     <ClInclude Include="Security\base64.h" />
+    <ClInclude Include="Backend\Menu\Menu.h" />
+    <ClInclude Include="Backend\Server\Server.hpp" />
+    <ClInclude Include="Backend\Server\Message.hpp" />
+    <ClInclude Include="Backend\Server\Json.hpp" />
   </ItemGroup>
 </Project>

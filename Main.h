@@ -19,17 +19,6 @@ LPDIRECT3D9              g_pD3D;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-static auto ClampName = [](const char* label, int max_charpters) -> std::string {
-    std::string ret = std::string(label);
-
-    if (ret.size() >= max_charpters) {
-        while (ret.size() >= max_charpters)
-            ret.pop_back();
-        ret += "...";
-    }
-
-    return ret;
-};
 bool CreateDeviceD3D(HWND hWnd)
 {
     if ((g_pD3D = Direct3DCreate9(D3D_SDK_VERSION)) == NULL)

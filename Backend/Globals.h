@@ -40,8 +40,9 @@ public:
 
 
 	std::vector<CUser> Users;
+	CUser* CurrentUser = nullptr;
 
-	void RegisterNewUser(std::string name, std::string link, std::string avalink);
+	void RegisterNewUser(std::string name, std::string link, std::string avalink, std::string password);
 	CUser* ParseDataForCurrentUser(std::string name);
 };
 

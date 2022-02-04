@@ -365,22 +365,22 @@ void DoCheck()
 	while (true)
 	{
 		if (pPeb->BeingDebugged)
+		{
+			MessageBox(NULL, "pPeb->BeingDebugged", "Error", MB_OKCANCEL);
 			ExitProcess(0);
-
+		}
 		if (!SecurityCheck())
+		{
+			MessageBox(NULL, "SecurityCheck", "Error", MB_OKCANCEL);
 			ExitProcess(0);
-
+		}
 		Sleep(500);
 	}
 }
 void CSeciruty::Init()
 {
-#if _DEBUG
-#else
-	EraseMemory();
-	HideThread();
+	//EraseMemory();
+	//HideThread();
 	std::thread checks(DoCheck);
-
 	checks.join();
-#endif // _DEBUG
 }

@@ -75,6 +75,7 @@
     <ExternalIncludePath>E:\1Work\d3d9;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>E:\1Work\d3d9;$(LibraryPath)</LibraryPath>
     <TargetName>AnimeHelper</TargetName>
+    <OutDir>..\Anime Helper Debug</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ExternalIncludePath>E:\1Work\d3d9;$(ExternalIncludePath)</ExternalIncludePath>
@@ -146,6 +147,8 @@
     <ClCompile Include="Backend\AnimeList\AnimeListBox.cpp" />
     <ClCompile Include="Backend\AnimeList\Internet.cpp" />
     <ClCompile Include="Backend\Globals.cpp" />
+    <ClCompile Include="Backend\Menu\Menu.cpp" />
+    <ClCompile Include="Backend\Server\Server.cpp" />
     <ClCompile Include="Backend\User\User.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
@@ -161,6 +164,10 @@
     <ClInclude Include="Backend\AnimeList\AnimeListBox.h" />
     <ClInclude Include="Backend\Globals.h" />
     <ClInclude Include="Backend\Logger.h" />
+    <ClInclude Include="Backend\Menu\Menu.h" />
+    <ClInclude Include="Backend\Server\Json.hpp" />
+    <ClInclude Include="Backend\Server\Message.hpp" />
+    <ClInclude Include="Backend\Server\Server.hpp" />
     <ClInclude Include="Backend\User\User.h" />
     <ClInclude Include="Curl\include\curl\curl.h" />
     <ClInclude Include="Curl\include\curl\curlver.h" />

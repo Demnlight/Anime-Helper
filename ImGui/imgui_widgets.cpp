@@ -6210,6 +6210,7 @@ bool ImGui::CustomButtonImage(const char* label, const char* desc, const ImVec2&
 
 
                     g_Globals->AnimeFavorites.push_back(anime);
+                    g_AnimeList->SaveAnimeList();
                 }
                 ImGui::CloseCurrentPopup();
 

@@ -59,7 +59,7 @@ void CInternet::DownloadImage(int index)
 
 	if (URLDownloadToFile(NULL, g_Globals->AllAnimeList.at(index).image_url.c_str(), outputname.c_str(), 0, NULL) == S_OK)
 	{
-		g_Logger->SetColor(COLOR_DEBUG);
+		g_Logger->SetColor(COLOR_INFO);
 		printf("[ DownloadImage ]");
 		g_Logger->ResetColor();
 
@@ -67,7 +67,7 @@ void CInternet::DownloadImage(int index)
 	}
 	else
 	{
-		g_Logger->SetColor(COLOR_DEBUG);
+		g_Logger->SetColor(COLOR_INFO);
 		printf("[ DownloadImage ]");
 		g_Logger->ResetColor();
 
@@ -96,11 +96,6 @@ void CInternet::ParseAnimeListAndImages()
 {
 	std::string page = GetUrlData(Xorstr("animehelper.000webhostapp.com"), Xorstr(""));
 
-	//std::vector<std::string> sites;
-	//std::vector<std::string> names;
-	//std::vector<std::string> image_urls;
-
-	
 	static int m = 0;
 	for (int i = 0; i < 100; i++)
 	{
@@ -120,7 +115,7 @@ void CInternet::ParseAnimeListAndImages()
 				if (!IsArrayHaveElementWithThisName(imageurl))
 					g_Globals->ParserCurrentAnimePage.push_back(imageurl);
 
-				g_Logger->SetColor(COLOR_DEBUG);
+				g_Logger->SetColor(COLOR_INFO);
 				printf("[ Parser ]");
 				g_Logger->ResetColor();
 
@@ -150,7 +145,7 @@ void CInternet::ParseAnimeListAndImages()
 				if (!IsArrayHaveElementWithThisName(nameurl))
 					g_Globals->ParserAnimeListNames.push_back(nameurl);
 
-				g_Logger->SetColor(COLOR_DEBUG);
+				g_Logger->SetColor(COLOR_INFO);
 				printf("[ Parser ]");
 				g_Logger->ResetColor();
 
@@ -210,7 +205,7 @@ void CInternet::ParseAnimeListAndImages()
 		anime.image_url = g_Globals->ParserImagesAnime.at(i);
 		g_Globals->AllAnimeList.push_back(anime);
 
-		g_Logger->SetColor(COLOR_DEBUG);
+		g_Logger->SetColor(COLOR_INFO);
 		printf("[ Parser ]");
 		g_Logger->ResetColor();
 
