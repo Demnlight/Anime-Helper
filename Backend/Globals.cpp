@@ -3,58 +3,32 @@
 #include "../ImGui/imgui_impl_dx9.h"
 #include "../ImGui/imgui_impl_win32.h"
 #include "../ImGui/imgui_internal.h"
+#include "Server/Server.hpp"
 
 #include <fstream>
 #include <algorithm>
 #include <D3dx9tex.h>
-
+#include <Shlobj.h>
 #pragma comment(lib, "D3dx9")
 
 void C_Globals::Init()
 {
+    
+    if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, g_Globals->AppDataPath)))
+    {
+        std::string FinalPath           = g_Globals->AppDataPath;         FinalPath += "\\AnimeHelper\\";
+        std::string FinalPathImages     = FinalPath;                      FinalPathImages += "\\Images\\";
+        CreateDirectory(FinalPath.c_str(), NULL);
+        CreateDirectory(FinalPathImages.c_str(), NULL);
+    }
+
+    while (g_User->UserName.length() < 2)
+    {
+        Sleep(500);
+    }
 
     g_Globals->CheckVersion();
-
-    g_Logger->SetColor(COLOR_DEBUG);
-    printf("[ Logger ]");
-    g_Logger->ResetColor();
-
-    printf(" Start PushAnimeList \n");
-    if (g_AnimeList->PushAnimeList() == RETURN_NO_FILE)
-    {
-        g_Logger->SetColor(COLOR_DEBUG);
-        printf("[ Logger ]");
-        g_Logger->ResetColor();
-
-        printf(" Start ParseAnimeListAndImages \n");
-        g_Internet->ParseAnimeListAndImages();
-
-        g_Logger->SetColor(COLOR_DEBUG);
-        printf("[ Logger ]");
-        g_Logger->ResetColor();
-
-        printf(" Start SaveAnimeList \n");
-        g_AnimeList->SaveAnimeList();
-    }
-    //clear array from repetitions
-    /*{
-        for (int m = 0; m < g_Globals->AllAnimeList.size(); m++)
-        {
-            for (int i = m + 1; i < g_Globals->AllAnimeList.size(); i++)
-            {
-                if (g_Globals->AllAnimeList.at(m).name == g_Globals->AllAnimeList.at(i).name)
-                {
-                    g_Globals->AllAnimeList.erase(g_Globals->AllAnimeList.begin() + i);
-                }
-            }
-        }
-    }*/
-
-    g_Logger->SetColor(COLOR_DEBUG);
-    printf("[ Logger ]");
-    g_Logger->ResetColor();
-
-    printf(" Start DownloadImage \n");
+    g_Server->PushAnimeList();
     for (int i = 0; i < g_Globals->AllAnimeList.size(); i++)
         g_Internet->DownloadImage(i);
 }
@@ -159,9 +133,10 @@ LPDIRECT3DTEXTURE9 C_Globals::GetTexture(std::vector<AnimeList>* arr, int index)
 {
     int my_image_width = 0;
     int my_image_height = 0;
+    std::string full_patch = g_Globals->AppDataPath; full_patch += Xorstr("\\AnimeHelper\\Images\\") + arr->at(index).name + ".jpg";
+
     if (!arr->at(index).texture)
     {
-        std::string full_patch = "Settings/" + arr->at(index).name + ".jpg";
         bool ret = LoadTextureFromFile(full_patch.c_str(), &arr->at(index).texture, &my_image_width, &my_image_height);
 
         if (ret)
@@ -170,5 +145,8 @@ LPDIRECT3DTEXTURE9 C_Globals::GetTexture(std::vector<AnimeList>* arr, int index)
             return nullptr;
     }
     else
+    {
+        //std::remove(full_patch.c_str());
         return arr->at(index).texture;
+    }
 }

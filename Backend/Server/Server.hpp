@@ -9,9 +9,12 @@ class C_Server
 {
 public:
 	virtual void Instance( );
-	virtual bool SendNetMsg(std::string jMessage, C_Message* jAnswer );
+	virtual bool SendNetMsg(std::string jMessage, std::string& ServerAnswer);
 	virtual void Register(std::string strUsername, std::string strPassword);
 	virtual void Login(std::string strUsername, std::string strPassword);
+	virtual int PushAnimeList();
+	virtual int SaveAnimeList();
+
 private:
 	int m_Socket = 0;
 

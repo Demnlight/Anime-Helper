@@ -28,7 +28,7 @@ void CMenu::DrawMainForm()
 
     if (g_Menu->CurrentTab == 0)
     {
-        if (!g_Globals->CurrentUser)
+        if (g_User->UserName.length() < 2)
         {
             g_Menu->FormSize = ImVec2(300, 250);
 
@@ -64,7 +64,7 @@ void CMenu::Tabs()
 {
     ImGui::TabButton(Xorstr("Home"), &g_Menu->CurrentTab, 0, 2);
 
-    if (g_Globals->CurrentUser)
+    if (g_User->UserName.length() > 2)
         ImGui::TabButton(Xorstr("Account"), &g_Menu->CurrentTab, 1, 2);
 }
 
@@ -73,7 +73,7 @@ void CMenu::SubTabs()
     switch (g_Menu->CurrentTab)
     {
     case 0:
-        if (!g_Globals->CurrentUser)
+        if (g_User->UserName.length() < 2)
         {
             ImGui::SubTabButton(Xorstr("Login"), &g_Menu->CurrentSubTab, 0, 2);
             ImGui::SubTabButton(Xorstr("Register"), &g_Menu->CurrentSubTab, 1, 2);

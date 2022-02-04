@@ -25,6 +25,8 @@ public:
 	std::vector<std::string> ParserCurrentAnimePage;
 	std::vector<std::string> ParserImagesAnime;
 
+	std::vector<std::string> AnimeByteImages;
+
 	void Init();
 	void CheckVersion();
 	int FindInMainArrayIndexByName(std::string label, std::vector<AnimeList> arr);
@@ -38,12 +40,7 @@ public:
 	D3DPRESENT_PARAMETERS    g_d3dpp;
 	LPDIRECT3D9              g_pD3D;
 
-
-	std::vector<CUser> Users;
-	CUser* CurrentUser = nullptr;
-
-	void RegisterNewUser(std::string name, std::string link, std::string avalink, std::string password);
-	CUser* ParseDataForCurrentUser(std::string name);
+	TCHAR AppDataPath[MAX_PATH];
 };
 
 inline C_Globals* g_Globals = new C_Globals();

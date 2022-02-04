@@ -153,8 +153,8 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     std::thread security(Security);
 
     security.join();
-    globals.join();
     drawing.join();
+    globals.join();
 
     return 0;
 }

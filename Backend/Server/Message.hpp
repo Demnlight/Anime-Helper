@@ -13,7 +13,9 @@ enum MSG_TYPE
 {
 	MSG_HELLO = 0,
 	MSG_REGISTER = 1,
-	MSG_LOGIN = 2
+	MSG_LOGIN = 2,
+	MSG_PUSHLIST = 3,
+	MSG_SAVELIST = 4
 };
 
 class C_Message

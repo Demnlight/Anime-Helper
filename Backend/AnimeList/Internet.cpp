@@ -53,7 +53,12 @@ std::string CInternet::GetUrlData(std::string host, std::string url)
 
 void CInternet::DownloadImage(int index)
 {
-	std::string outputname = Xorstr("Settings/");
+	for (int i = 0; i < g_Globals->AllAnimeList.at(index).name.length(); i++)
+		if (g_Globals->AllAnimeList.at(index).name.at(i) == '?' || g_Globals->AllAnimeList.at(index).name.at(i) == ':' || g_Globals->AllAnimeList.at(index).name.at(i) == '`')
+			g_Globals->AllAnimeList.at(index).name.erase(g_Globals->AllAnimeList.at(index).name.begin() + i);
+
+	std::string outputname = g_Globals->AppDataPath;
+	outputname += Xorstr("\\AnimeHelper\\Images\\");
 	outputname += g_Globals->AllAnimeList.at(index).name;
 	outputname += Xorstr(".jpg");
 
@@ -139,7 +144,7 @@ void CInternet::ParseAnimeListAndImages()
 				nameurl.erase(nameurl.end());
 
 				for (int i = 0; i < nameurl.length(); i++)
-					if (nameurl.at(i) == '?')
+					if (nameurl.at(i) == '?' || nameurl.at(i) == ':')
 						nameurl.erase(nameurl.begin() + i);
 
 				if (!IsArrayHaveElementWithThisName(nameurl))
