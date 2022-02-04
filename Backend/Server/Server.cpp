@@ -1,9 +1,11 @@
 #include <WS2tcpip.h>
 #include <fstream>
+#include <tchar.h>
 
 #include "Server.hpp"
 #include "../User/User.h"
 #include "../Globals.h"
+#include "../../Security/base64.h"
 
 #pragma comment( lib, "ws2_32.lib" )
 
@@ -72,29 +74,105 @@ void C_Server::Register(std::string strUsername, std::string strPassword)
 	jMessage[Xorstr("Data")][Xorstr("Type")] = std::to_string(MSG_TYPE::MSG_REGISTER);
 	jMessage[Xorstr("Data")][Xorstr("Username")] = strUsername;
 	jMessage[Xorstr("Data")][Xorstr("Password")] = strPassword;
+	jMessage[Xorstr("Data")][Xorstr("Hwid")] = g_User->GetHWID();
 
 	auto string = jMessage.dump(4);
 
 	if (!SendNetMsg(string, jAnswer))
 		return;
 }
-
-void C_Server::Login(std::string strUsername, std::string strPassword)
+void C_Server::Login(std::string strHwid)
 {
+	HKEY rKey;
+	TCHAR Reget[256] = { 0 };
+	DWORD RegetPath = sizeof(Reget);
+	RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\AnimeHelper\\", NULL, KEY_QUERY_VALUE, &rKey);
+	RegQueryValueEx(rKey, "Token", NULL, NULL, (LPBYTE)&Reget, &RegetPath);
+
 	std::string jAnswer;
 	nlohmann::json jMessage;
+	nlohmann::json allJson;
 
 	jMessage[Xorstr("Data")][Xorstr("Status")] = std::to_string(RESULT_OK);
-	jMessage[Xorstr("Data")][Xorstr("Type")] = std::to_string(MSG_TYPE::MSG_LOGIN);
-	jMessage[Xorstr("Data")][Xorstr("Username")] = strUsername;
-	jMessage[Xorstr("Data")][Xorstr("Password")] = strPassword;
+	jMessage[Xorstr("Data")][Xorstr("Type")] = std::to_string(MSG_TYPE::MSG_LOGINTOKEN);
+	jMessage[Xorstr("Data")][Xorstr("Hwid")] = strHwid;
+	jMessage[Xorstr("Data")][Xorstr("UserToken")] = Reget;
 
 	auto string = jMessage.dump(4);
 
 	if (!SendNetMsg(string, jAnswer))
 		return;
 
+	std::string FileName = g_Globals->AppDataPath;
+	FileName += Xorstr("\\AnimeHelper\\Temp.log");
+
+	std::ofstream pNewFile(FileName, std::ios::out | std::ios::trunc);
+	pNewFile.clear();
+	pNewFile << jAnswer.c_str();
+	pNewFile.close();
+
+	std::ifstream ifs_final;
+	ifs_final.open(FileName);
+	ifs_final >> allJson;
+	ifs_final.close();
+
+	std::string error = allJson[Xorstr("Data")][Xorstr("Text")];
+	if (error == "User not found." || error == "Password incorrect.")
+		return;
+
+	g_User->UserName = error;
+
+	//remove(FileName.c_str());
+}
+void C_Server::Login(std::string strUsername, std::string strPassword)
+{
+	std::string jAnswer;
+	nlohmann::json jMessage;
+	nlohmann::json allJson;
+
+	jMessage[Xorstr("Data")][Xorstr("Status")] = std::to_string(RESULT_OK);
+	jMessage[Xorstr("Data")][Xorstr("Type")] = std::to_string(MSG_TYPE::MSG_LOGIN);
+	jMessage[Xorstr("Data")][Xorstr("Username")] = strUsername;
+	jMessage[Xorstr("Data")][Xorstr("Password")] = strPassword;
+	jMessage[Xorstr("Data")][Xorstr("Hwid")] = g_User->GetHWID();
+
+	auto string = jMessage.dump(4);
+
+	if (!SendNetMsg(string, jAnswer))
+		return;
+
+	std::string FileName = g_Globals->AppDataPath;
+	FileName += Xorstr("\\AnimeHelper\\Temp.log");
+
+	std::ofstream pNewFile(FileName, std::ios::out | std::ios::trunc);
+	pNewFile.clear();
+	pNewFile << jAnswer.c_str();
+	pNewFile.close();
+
+	std::ifstream ifs_final;
+	ifs_final.open(FileName);
+	ifs_final >> allJson;
+	ifs_final.close();
+
+	std::string token = allJson[Xorstr("Data")][Xorstr("Token")];
+	std::string hwid = allJson[Xorstr("Data")][Xorstr("Hwid")];
 	g_User->UserName = strUsername;
+
+	_TCHAR szPath[] = _T("Software\\AnimeHelper\\");
+
+	HKEY hKey;
+	if (RegCreateKeyEx(HKEY_CURRENT_USER, szPath, 0, NULL, REG_OPTION_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) != ERROR_SUCCESS) {
+		return;
+	}
+	if (RegSetValueEx(hKey, _T("Token"), NULL, REG_SZ, (LPBYTE)token.c_str(), strlen(token.c_str()) + 1) != ERROR_SUCCESS) {
+		return;
+	}
+	if (RegSetValueEx(hKey, _T("Hwid"), NULL, REG_SZ, (LPBYTE)hwid.c_str(), strlen(hwid.c_str()) + 1) != ERROR_SUCCESS) {
+		return;
+	}
+	if (RegCloseKey(hKey) != ERROR_SUCCESS) {
+		return;
+	}
 }
 
 int C_Server::PushAnimeList()

@@ -22,6 +22,8 @@ void C_Globals::Init()
         CreateDirectory(FinalPathImages.c_str(), NULL);
     }
 
+    g_Server->Login(g_User->GetHWID());
+
     while (g_User->UserName.length() < 2)
     {
         Sleep(500);
@@ -36,7 +38,7 @@ void C_Globals::Init()
 void C_Globals::CheckVersion()
 {
     auto loader_version = g_Internet->GetUrlData(Xorstr("animehelper.000webhostapp.com"), Xorstr("version.php"));
-    std::string version = Xorstr("1.002");
+    std::string version = Xorstr("1.003");
 
     g_Logger->SetColor(COLOR_DEBUG);
     printf("[ Check Version ]");

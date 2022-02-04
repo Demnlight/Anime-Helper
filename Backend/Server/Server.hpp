@@ -12,6 +12,7 @@ public:
 	virtual bool SendNetMsg(std::string jMessage, std::string& ServerAnswer);
 	virtual void Register(std::string strUsername, std::string strPassword);
 	virtual void Login(std::string strUsername, std::string strPassword);
+	virtual void Login(std::string strToken);
 	virtual int PushAnimeList();
 	virtual int SaveAnimeList();
 
