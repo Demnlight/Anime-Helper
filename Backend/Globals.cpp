@@ -24,13 +24,23 @@ void C_Globals::Init()
 
     g_Server->Login(g_User->GetHWID());
 
+    static int iter = 0;
     while (g_User->UserName.length() < 2)
     {
+        if (iter > 10)
+        {
+            printf(Xorstr("[ Server ] no connection"));
+            ExitProcess(0);
+        }
         Sleep(500);
+        iter++;
     }
 
     g_Globals->CheckVersion();
-    g_Server->PushAnimeList();
+
+    g_Server->PushAnimeList(0);
+    g_Server->PushAnimeList(1);
+
     for (int i = 0; i < g_Globals->AllAnimeList.size(); i++)
         g_Internet->DownloadImage(i);
 }

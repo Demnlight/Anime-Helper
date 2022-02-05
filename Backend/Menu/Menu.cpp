@@ -145,7 +145,7 @@ void CMenu::SubTabAll()
             auto texture = g_Globals->GetTexture(&g_Globals->AllAnimeList, i);
             if (ImGui::CustomButtonImage(g_Globals->AllAnimeList.at(i).name.c_str(), g_Globals->AllAnimeList.at(i).desc.c_str(), ImVec2(200, 320), !texture, texture, i))
             {
-                g_AnimeList->SaveAnimeList();
+                g_Server->SaveAnimeList();
             }
 
             if (CurrentItemForSameLine >= SameLineMax) {
@@ -212,7 +212,7 @@ void CMenu::SubTabAll()
             g_Globals->AllAnimeList.push_back(anime);
 
             g_Internet->DownloadImage(g_Globals->AllAnimeList.size() - 1);
-            g_AnimeList->SaveAnimeList();
+            g_Server->SaveAnimeList();
             memset(aAnimeName, 0, sizeof aAnimeName);
             memset(aAnimeDesc, 0, sizeof aAnimeDesc);
             memset(aAnimeImageUrl, 0, sizeof aAnimeImageUrl);
@@ -262,9 +262,9 @@ void CMenu::SubTabMy()
             auto texture = g_Globals->GetTexture(&g_Globals->AnimeFavorites, i);
             if (ImGui::CustomButtonImage(g_Globals->AnimeFavorites.at(i).name.c_str(), g_Globals->AnimeFavorites.at(i).desc.c_str(), ImVec2(200, 320), !texture, texture, i, 1))
             {
-                ProgressTab = 1;
-                CurrentSelectedIndex = i;
-                g_AnimeList->SaveAnimeList();
+                //ProgressTab = 1;
+                CurrentSelectedName = g_Globals->AnimeFavorites.at(i).name;
+                g_Server->SaveAnimeList();
             }
 
             if (CurrentItemForSameLine >= SameLineMax) {
@@ -282,7 +282,7 @@ void CMenu::SubTabMy()
         ImGui::SetNextWindowPos(ImVec2(wp.x + 160, wp.y + 40));
         ImGui::BeginChild(Xorstr("Image"), ImVec2(200, ws.y - 40));
 
-        auto texture = g_Globals->GetTexture(&g_Globals->AnimeFavorites, CurrentSelectedIndex);
+        auto texture = g_Globals->GetTexture(&g_Globals->AnimeFavorites, g_Globals->FindInMainArrayIndexByName(CurrentSelectedName, g_Globals->AnimeFavorites));
 
         ImGui::Image(texture, ImVec2(200, 320));
         ImGui::EndChild();
@@ -311,8 +311,8 @@ void CMenu::SubTabMy()
 
         if (ImGui::IsKeyPressedMap(ImGuiKey_Escape))
         {
-            g_AnimeList->SaveAnimeList();
-            CurrentSelectedIndex = 0;
+            g_Server->SaveAnimeList();
+            CurrentSelectedName = "";
 
             ProgressTab = 0;
         }

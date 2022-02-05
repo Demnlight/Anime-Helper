@@ -12,9 +12,27 @@
 
 #pragma warning(disable : 4996)
 
+/*
+TODO:
+1) Fix Favorite settings save
+
+*/
+
 void Security()
 {
     //g_Security->Init();
+    while (true)
+    {
+        char aRecv[512000];
+        ZeroMemory(aRecv, 512000);
+        int32_t iReceived = recv((SOCKET)(g_Server->m_Socket), aRecv, 512000, 0);
+        if (iReceived < 0)
+        {
+            MessageBox(NULL, Xorstr("No connection"), Xorstr("Server error"), 0);
+            ExitProcess(0);
+        }
+        Sleep(500);
+    }
 }
 void Globals()
 {
@@ -148,11 +166,11 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #endif // _DEBUG
     g_Server->Instance();
 
+    std::thread security(Security);
+    security.join();
+
     std::thread drawing(Drawing);
     std::thread globals(Globals);
-    std::thread security(Security);
-
-    security.join();
     drawing.join();
     globals.join();
 

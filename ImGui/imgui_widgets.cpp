@@ -5960,6 +5960,8 @@ bool ImGui::LoadingAnimation(ImVec2 pos, const char* label, float radius, int th
 }
 #include "../Security/xorstr.hpp"
 #include "../Backend/Globals.h"
+#include "../Backend/Server/Server.hpp"
+
 bool ImGui::CustomButtonImage(const char* label, const char* desc, const ImVec2& size, bool is_loading, ImTextureID user_texture_id, int index, int variance)
 {
     ImGuiWindow* window = GetCurrentWindow();
@@ -6210,7 +6212,7 @@ bool ImGui::CustomButtonImage(const char* label, const char* desc, const ImVec2&
 
 
                     g_Globals->AnimeFavorites.push_back(anime);
-                    g_AnimeList->SaveAnimeList();
+                    g_Server->SaveAnimeList();
                 }
                 ImGui::CloseCurrentPopup();
 
@@ -6230,6 +6232,7 @@ bool ImGui::CustomButtonImage(const char* label, const char* desc, const ImVec2&
             if (ImGui::Selectable(Xorstr("Remove")))
             {
                 g_Globals->AnimeFavorites.erase(g_Globals->AnimeFavorites.begin() + index);
+                g_Server->SaveAnimeList();
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();

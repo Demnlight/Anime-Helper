@@ -13,10 +13,8 @@ public:
 	virtual void Register(std::string strUsername, std::string strPassword);
 	virtual void Login(std::string strUsername, std::string strPassword);
 	virtual void Login(std::string strToken);
-	virtual int PushAnimeList();
+	virtual int PushAnimeList(int AnimeListType = 0);
 	virtual int SaveAnimeList();
-
-private:
 	int m_Socket = 0;
 
 	bool m_bIsConnected = false;
