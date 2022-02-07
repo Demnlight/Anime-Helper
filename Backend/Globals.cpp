@@ -9,11 +9,13 @@
 #include <algorithm>
 #include <D3dx9tex.h>
 #include <Shlobj.h>
+#include <thread>
 #pragma comment(lib, "D3dx9")
 
+#define ARRAY_SEARCH(array, elem) (std::find(array.begin(), array.end(), elem) != array.end())
+
 void C_Globals::Init()
-{
-    
+{    
     if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, g_Globals->AppDataPath)))
     {
         std::string FinalPath           = g_Globals->AppDataPath;         FinalPath += "\\AnimeHelper\\";
@@ -24,27 +26,36 @@ void C_Globals::Init()
 
     g_Server->Login(g_User->GetHWID());
 
-    static int iter = 0;
-    while (g_User->UserName.length() < 2)
-    {
-        if (iter > 10)
-        {
-            printf(Xorstr("[ Server ] no connection"));
-            ExitProcess(0);
-        }
-        Sleep(500);
-        iter++;
-    }
-
     g_Globals->CheckVersion();
 
     g_Server->PushAnimeList(0);
     g_Server->PushAnimeList(1);
 
+    g_Globals->FormatAnimeName(&g_Globals->AllAnimeList);
+    g_Globals->FormatAnimeName(&g_Globals->AnimeFavorites);
+
     for (int i = 0; i < g_Globals->AllAnimeList.size(); i++)
         g_Internet->DownloadImage(i);
-}
 
+  /*  for (int i = 0; i < g_Globals->AllAnimeList.size(); i++)
+    {
+        g_Globals->GetTexture(&g_Globals->AllAnimeList, i);
+        Sleep(200);
+    }*/
+}
+void C_Globals::FormatAnimeName(std::vector<AnimeList>* arr)
+{
+    for (int index = 0; index < arr->size(); index++)
+    {
+        for (int i = 0; i < arr->at(index).name.length(); i++)
+            if (arr->at(index).name.at(i) == '?' ||
+                arr->at(index).name.at(i) == ':' ||
+                arr->at(index).name.at(i) == '`' ||
+                arr->at(index).name.at(i) == '"' ||
+                arr->at(index).name.at(i) == '/')
+                arr->at(index).name.at(i) = ' ';
+    }
+}
 void C_Globals::CheckVersion()
 {
     auto loader_version = g_Internet->GetUrlData(Xorstr("animehelper.000webhostapp.com"), Xorstr("version.php"));
@@ -141,24 +152,54 @@ bool LoadTextureFromFile(const char* filename, PDIRECT3DTEXTURE9* out_texture, i
     return true;
 }
 
-LPDIRECT3DTEXTURE9 C_Globals::GetTexture(std::vector<AnimeList>* arr, int index)
+void C_Globals::ProceedAnimeListAll()
 {
+    if (QueueAll.empty())
+        return;
+
+    int item = QueueAll.front();
+
     int my_image_width = 0;
     int my_image_height = 0;
-    std::string full_patch = g_Globals->AppDataPath; full_patch += Xorstr("\\AnimeHelper\\Images\\") + arr->at(index).name + ".jpg";
+    std::string full_patch = g_Globals->AppDataPath; full_patch += Xorstr("\\AnimeHelper\\Images\\") + g_Globals->AllAnimeList.at(item).name + ".jpg";
+    LoadTextureFromFile(full_patch.c_str(), &g_Globals->AllAnimeList.at(item).texture, &my_image_width, &my_image_height);
 
-    if (!arr->at(index).texture)
-    {
-        bool ret = LoadTextureFromFile(full_patch.c_str(), &arr->at(index).texture, &my_image_width, &my_image_height);
+    QueueAll.pop_front();
+}
+void C_Globals::ProceedFavoriteAnime()
+{
+    if (QueueFavorite.empty())
+        return;
 
-        if (ret)
-            return arr->at(index).texture;
-        else
-            return nullptr;
-    }
-    else
-    {
-        //std::remove(full_patch.c_str());
-        return arr->at(index).texture;
-    }
+    int item = QueueFavorite.front();
+
+    int my_image_width = 0;
+    int my_image_height = 0;
+    std::string full_patch = g_Globals->AppDataPath; full_patch += Xorstr("\\AnimeHelper\\Images\\") + g_Globals->AnimeFavorites.at(item).name + ".jpg";
+    LoadTextureFromFile(full_patch.c_str(), &g_Globals->AnimeFavorites.at(item).texture, &my_image_width, &my_image_height);
+
+    QueueFavorite.pop_front();
+}
+
+LPDIRECT3DTEXTURE9 C_Globals::GetTextureAllAnimeList(int index)
+{
+    LPDIRECT3DTEXTURE9 ret = g_Globals->AllAnimeList.at(index).texture;
+    if (ret)
+        return ret;
+
+    if (!ARRAY_SEARCH(this->QueueAll, index))
+        this->QueueAll.emplace_back(index);
+
+    return nullptr;
+}
+LPDIRECT3DTEXTURE9 C_Globals::GetTextureFavotites(int index)
+{
+    LPDIRECT3DTEXTURE9 ret = g_Globals->AnimeFavorites.at(index).texture;
+    if (ret)
+        return ret;
+
+    if (!ARRAY_SEARCH(this->QueueFavorite, index))
+        this->QueueFavorite.emplace_back(index);
+
+    return nullptr;
 }

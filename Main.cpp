@@ -9,6 +9,8 @@
 #include "Security/Security.h"
 #include "Security/xorstr.hpp"
 #include "Security/lazy_importer.hpp"
+#include "Security/base64.h"
+#include <tchar.h>
 
 #pragma warning(disable : 4996)
 
@@ -20,24 +22,31 @@ TODO:
 
 void Security()
 {
-    //g_Security->Init();
-    while (true)
-    {
-        char aRecv[512000];
-        ZeroMemory(aRecv, 512000);
-        int32_t iReceived = recv((SOCKET)(g_Server->m_Socket), aRecv, 512000, 0);
-        if (iReceived < 0)
-        {
-            MessageBox(NULL, Xorstr("No connection"), Xorstr("Server error"), 0);
-            ExitProcess(0);
-        }
-        Sleep(500);
+    _TCHAR szPath[] = _T("Software\\AnimeHelper\\");
+    std::string token = g_Crypt->base64_encode(g_User->GetHWID());
+    std::string hwid = g_User->GetHWID();
+
+    HKEY hKey;
+    if (RegCreateKeyEx(HKEY_CURRENT_USER, szPath, 0, NULL, REG_OPTION_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) != ERROR_SUCCESS) {
+        return;
     }
+    if (RegSetValueEx(hKey, _T("Token"), NULL, REG_SZ, (LPBYTE)token.c_str(), strlen(token.c_str()) + 1) != ERROR_SUCCESS) {
+        return;
+    }
+    if (RegSetValueEx(hKey, _T("Hwid"), NULL, REG_SZ, (LPBYTE)hwid.c_str(), strlen(hwid.c_str()) + 1) != ERROR_SUCCESS) {
+        return;
+    }
+    if (RegCloseKey(hKey) != ERROR_SUCCESS) {
+        return;
+    }
+
+    //g_Security->Init();
 }
 void Globals()
 {
     g_Globals->Init();
 }
+
 void Drawing()
 {
     // Create application window
@@ -73,7 +82,7 @@ void Drawing()
         style.WindowRounding = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 
-        style.ScrollbarSize = 3.f;
+        style.ScrollbarSize = 5.f;
         style.ScrollbarRounding = 5.f;
     }
 
@@ -106,6 +115,9 @@ void Drawing()
             DispatchMessage(&msg);
             continue;
         }
+
+        g_Globals->ProceedAnimeListAll();
+        g_Globals->ProceedFavoriteAnime();
 
         // Start the Dear ImGui frame
         ImGui_ImplDX9_NewFrame();
@@ -164,15 +176,17 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #if _DEBUG
     g_Logger->StartUp();
 #endif // _DEBUG
+
+
     g_Server->Instance();
 
-    std::thread security(Security);
-    security.join();
-
-    std::thread drawing(Drawing);
-    std::thread globals(Globals);
-    drawing.join();
-    globals.join();
+    std::thread SecurityThread(Security);
+    std::thread DrawingThread(Drawing);
+    std::thread GlobalsThread(Globals);
+    
+    SecurityThread.join();
+    DrawingThread.join();
+    GlobalsThread.join();
 
     return 0;
 }

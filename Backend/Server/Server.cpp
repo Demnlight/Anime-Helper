@@ -1,6 +1,7 @@
 #include <WS2tcpip.h>
 #include <fstream>
 #include <tchar.h>
+#include <thread>
 
 #include "Server.hpp"
 #include "../User/User.h"
@@ -100,10 +101,10 @@ void C_Server::Register(std::string strUsername, std::string strPassword)
 void C_Server::Login(std::string strHwid)
 {
 	HKEY rKey;
-	TCHAR Reget[256] = { 0 };
-	DWORD RegetPath = sizeof(Reget);
+	TCHAR Token[256] = { 0 };
+	DWORD TokenPath = sizeof(Token);
 	RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\AnimeHelper\\", NULL, KEY_QUERY_VALUE, &rKey);
-	RegQueryValueEx(rKey, "Token", NULL, NULL, (LPBYTE)&Reget, &RegetPath);
+	RegQueryValueEx(rKey, "Token", NULL, NULL, (LPBYTE)&Token, &TokenPath);
 
 	std::string jAnswer;
 	nlohmann::json jMessage;
@@ -112,7 +113,7 @@ void C_Server::Login(std::string strHwid)
 	jMessage[Xorstr("Data")][Xorstr("Status")] = std::to_string(RESULT_OK);
 	jMessage[Xorstr("Data")][Xorstr("Type")] = std::to_string(MSG_TYPE::MSG_LOGINTOKEN);
 	jMessage[Xorstr("Data")][Xorstr("Hwid")] = strHwid;
-	jMessage[Xorstr("Data")][Xorstr("UserToken")] = Reget;
+	jMessage[Xorstr("Data")][Xorstr("UserToken")] = Token;
 
 	auto string = jMessage.dump(4);
 
@@ -137,6 +138,8 @@ void C_Server::Login(std::string strHwid)
 		return;
 
 	g_User->UserName = error;
+	g_User->Token = Token;
+	g_User->Hwid = strHwid;
 
 	//remove(FileName.c_str());
 }
@@ -173,22 +176,6 @@ void C_Server::Login(std::string strUsername, std::string strPassword)
 	std::string token = allJson[Xorstr("Data")][Xorstr("Token")];
 	std::string hwid = allJson[Xorstr("Data")][Xorstr("Hwid")];
 	g_User->UserName = strUsername;
-
-	_TCHAR szPath[] = _T("Software\\AnimeHelper\\");
-
-	HKEY hKey;
-	if (RegCreateKeyEx(HKEY_CURRENT_USER, szPath, 0, NULL, REG_OPTION_VOLATILE, KEY_WRITE, NULL, &hKey, NULL) != ERROR_SUCCESS) {
-		return;
-	}
-	if (RegSetValueEx(hKey, _T("Token"), NULL, REG_SZ, (LPBYTE)token.c_str(), strlen(token.c_str()) + 1) != ERROR_SUCCESS) {
-		return;
-	}
-	if (RegSetValueEx(hKey, _T("Hwid"), NULL, REG_SZ, (LPBYTE)hwid.c_str(), strlen(hwid.c_str()) + 1) != ERROR_SUCCESS) {
-		return;
-	}
-	if (RegCloseKey(hKey) != ERROR_SUCCESS) {
-		return;
-	}
 }
 
 int C_Server::PushAnimeList(int AnimeListTyp)
@@ -232,21 +219,8 @@ int C_Server::PushAnimeList(int AnimeListTyp)
 				{
 					AnimeList anime;
 					anime.name = jAnimeList[i][Xorstr("name")].get < std::string >();
-					anime.desc = jAnimeList[i][Xorstr("desc")].get < std::string >();
 					anime.image_url = jAnimeList[i][Xorstr("image_url")].get < std::string >();
-					anime.rating = jAnimeList[i][Xorstr("rating")].get < int >();
-					anime.status = jAnimeList[i][Xorstr("status")].get < std::string >();
-					anime.genre = jAnimeList[i][Xorstr("genre")].get < std::string >();
-					anime.type = jAnimeList[i][Xorstr("type")].get < std::string >();
-					anime.original_source = jAnimeList[i][Xorstr("original_source")].get < std::string >();
-					anime.last_season_date_release = jAnimeList[i][Xorstr("last_season_date_release")].get < std::string >();
-					anime.start_and_end_date = jAnimeList[i][Xorstr("start_and_end_date")].get < std::string >();
-					anime.studio = jAnimeList[i][Xorstr("studio")].get < std::string >();
-					anime.MPAA_rating = jAnimeList[i][Xorstr("MPAA_rating")].get < std::string >();
-					anime.age_restrictions = jAnimeList[i][Xorstr("age_restrictions")].get < std::string >();
-					anime.average_part_duration = jAnimeList[i][Xorstr("average_part_duration")].get < std::string >();
-					anime.ranobe_manga = jAnimeList[i][Xorstr("ranobe_manga")].get < std::string >();
-
+					
 					g_Globals->AllAnimeList.push_back(anime);
 				}
 			}

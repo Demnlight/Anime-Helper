@@ -5,7 +5,8 @@
 #include <wininet.h>
 #include <iomanip>
 #include <algorithm>
-
+#include <fstream>
+#include <thread>
 #pragma comment (lib, "wininet.lib")
 #pragma comment (lib, "urlmon.lib")
 
@@ -51,16 +52,34 @@ std::string CInternet::GetUrlData(std::string host, std::string url)
 	return data;
 }
 
-void CInternet::DownloadImage(int index)
+void FormatName(int index)
 {
 	for (int i = 0; i < g_Globals->AllAnimeList.at(index).name.length(); i++)
-		if (g_Globals->AllAnimeList.at(index).name.at(i) == '?' || g_Globals->AllAnimeList.at(index).name.at(i) == ':' || g_Globals->AllAnimeList.at(index).name.at(i) == '`')
-			g_Globals->AllAnimeList.at(index).name.erase(g_Globals->AllAnimeList.at(index).name.begin() + i);
+		if (g_Globals->AllAnimeList.at(index).name.at(i) == '?' || g_Globals->AllAnimeList.at(index).name.at(i) == ':' || g_Globals->AllAnimeList.at(index).name.at(i) == '`' || g_Globals->AllAnimeList.at(index).name.at(i) == '"' || g_Globals->AllAnimeList.at(index).name.at(i) == '/')
+			g_Globals->AllAnimeList.at(index).name.at(i) = ' ';
+}
 
+void CInternet::DownloadImage(int index)
+{
+	
 	std::string outputname = g_Globals->AppDataPath;
 	outputname += Xorstr("\\AnimeHelper\\Images\\");
 	outputname += g_Globals->AllAnimeList.at(index).name;
 	outputname += Xorstr(".jpg");
+
+	std::ifstream ifs_final(outputname);
+	if (ifs_final)
+	{
+		g_Logger->SetColor(COLOR_INFO);
+		printf("[ DownloadImage ]");
+		g_Logger->ResetColor();
+
+		printf(" Image with OutputName: %s Found \n", g_Globals->AllAnimeList.at(index).image_url.c_str(), outputname.c_str());
+		ifs_final.close();
+
+		return;
+	}
+	ifs_final.close();
 
 	if (URLDownloadToFile(NULL, g_Globals->AllAnimeList.at(index).image_url.c_str(), outputname.c_str(), 0, NULL) == S_OK)
 	{
