@@ -52,7 +52,7 @@ void Drawing()
     // Create application window
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, Xorstr("Anime helper"), NULL };
     RegisterClassEx(&wc);
-    main_hwnd = CreateWindow(wc.lpszClassName, Xorstr("Anime helper"), WS_POPUP, 0, 0, 720, 360, NULL, NULL, wc.hInstance, NULL);
+    main_hwnd = CreateWindow(wc.lpszClassName, Xorstr("Anime helper"), WS_POPUP, 0, 0, 5, 5, NULL, NULL, wc.hInstance, NULL);
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(main_hwnd)) {
@@ -62,8 +62,9 @@ void Drawing()
     }
 
     // Show the window
-    ShowWindow(main_hwnd, SW_HIDE);
+    ShowWindow(main_hwnd, SW_HIDE /*SW_HIDE*/);
     UpdateWindow(main_hwnd);
+
 
     // Setup Dear ImGui context
     ImGui::CreateContext();
@@ -96,13 +97,6 @@ void Drawing()
         io.Fonts->AddFontFromMemoryTTF((void*)segoeui, sizeof(segoeui), 25.0f, NULL, io.Fonts->GetGlyphRangesDefault());
         io.Fonts->AddFontFromMemoryTTF((void*)segoeui, sizeof(segoeui), 20.0f, NULL, io.Fonts->GetGlyphRangesDefault());
     }
-
-    DWORD window_flags = ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar;
-
-    RECT screen_rect;
-    GetWindowRect(GetDesktopWindow(), &screen_rect);
-    int x = 10/*float(screen_rect.right - WINDOW_WIDTH) / 2.f*/;
-    int y = 10/*float(screen_rect.bottom - WINDOW_HEIGHT) / 2.f*/;
 
     // Main loop
     MSG msg;
@@ -152,9 +146,6 @@ void Drawing()
         // Handle loss of D3D9 device
         if (result == D3DERR_DEVICELOST && g_pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET) {
             ResetDevice();
-        }
-        if (!loader_active) {
-            msg.message = WM_QUIT;
         }
     }
 

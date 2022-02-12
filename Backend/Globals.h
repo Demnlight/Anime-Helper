@@ -36,8 +36,8 @@ public:
 
 	std::string AutomaticNewStroke(std::string label, int window_size_x);
 
-	LPDIRECT3DTEXTURE9 GetTextureAllAnimeList(int index);
-	LPDIRECT3DTEXTURE9 GetTextureFavotites(int index);
+	void GetTextureAllAnimeList(int index);
+	void GetTextureFavotites(int index);
 
 	LPDIRECT3DDEVICE9        g_pd3dDevice;
 	D3DPRESENT_PARAMETERS    g_d3dpp;

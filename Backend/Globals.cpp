@@ -135,21 +135,11 @@ int C_Globals::FindInMainArrayIndexByName(std::string label, std::vector<AnimeLi
     return index >= 0 ? index : -1;
 }
 
-bool LoadTextureFromFile(const char* filename, PDIRECT3DTEXTURE9* out_texture, int* out_width, int* out_height)
+bool LoadTextureFromFile(const char* filename, PDIRECT3DTEXTURE9* out_texture)
 {
     // Load texture from disk
-    PDIRECT3DTEXTURE9 texture;
-    HRESULT hr = D3DXCreateTextureFromFileA(g_Globals->g_pd3dDevice, filename, &texture);
-    if (hr != S_OK)
-        return false;
-
-    // Retrieve description of the texture surface so we can access its size
-    D3DSURFACE_DESC my_image_desc;
-    texture->GetLevelDesc(0, &my_image_desc);
-    *out_texture = texture;
-    *out_width = (int)my_image_desc.Width;
-    *out_height = (int)my_image_desc.Height;
-    return true;
+    HRESULT hr = D3DXCreateTextureFromFileA(g_Globals->g_pd3dDevice, filename, out_texture);
+    return hr == S_OK;
 }
 
 void C_Globals::ProceedAnimeListAll()
@@ -158,11 +148,8 @@ void C_Globals::ProceedAnimeListAll()
         return;
 
     int item = QueueAll.front();
-
-    int my_image_width = 0;
-    int my_image_height = 0;
     std::string full_patch = g_Globals->AppDataPath; full_patch += Xorstr("\\AnimeHelper\\Images\\") + g_Globals->AllAnimeList.at(item).name + ".jpg";
-    LoadTextureFromFile(full_patch.c_str(), &g_Globals->AllAnimeList.at(item).texture, &my_image_width, &my_image_height);
+    LoadTextureFromFile(full_patch.c_str(), &g_Globals->AllAnimeList.at(item).texture);
 
     QueueAll.pop_front();
 }
@@ -172,34 +159,19 @@ void C_Globals::ProceedFavoriteAnime()
         return;
 
     int item = QueueFavorite.front();
-
-    int my_image_width = 0;
-    int my_image_height = 0;
     std::string full_patch = g_Globals->AppDataPath; full_patch += Xorstr("\\AnimeHelper\\Images\\") + g_Globals->AnimeFavorites.at(item).name + ".jpg";
-    LoadTextureFromFile(full_patch.c_str(), &g_Globals->AnimeFavorites.at(item).texture, &my_image_width, &my_image_height);
+    LoadTextureFromFile(full_patch.c_str(), &g_Globals->AnimeFavorites.at(item).texture);
 
     QueueFavorite.pop_front();
 }
 
-LPDIRECT3DTEXTURE9 C_Globals::GetTextureAllAnimeList(int index)
+void C_Globals::GetTextureAllAnimeList(int index)
 {
-    LPDIRECT3DTEXTURE9 ret = g_Globals->AllAnimeList.at(index).texture;
-    if (ret)
-        return ret;
-
-    if (!ARRAY_SEARCH(this->QueueAll, index))
+    if (!ARRAY_SEARCH(this->QueueAll, index) && !g_Globals->AllAnimeList.at(index).texture)
         this->QueueAll.emplace_back(index);
-
-    return nullptr;
 }
-LPDIRECT3DTEXTURE9 C_Globals::GetTextureFavotites(int index)
+void C_Globals::GetTextureFavotites(int index)
 {
-    LPDIRECT3DTEXTURE9 ret = g_Globals->AnimeFavorites.at(index).texture;
-    if (ret)
-        return ret;
-
-    if (!ARRAY_SEARCH(this->QueueFavorite, index))
+    if (!ARRAY_SEARCH(this->QueueFavorite, index) && !g_Globals->AnimeFavorites.at(index).texture)
         this->QueueFavorite.emplace_back(index);
-
-    return nullptr;
 }

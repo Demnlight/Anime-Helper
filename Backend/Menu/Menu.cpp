@@ -15,9 +15,9 @@ void CMenu::DrawMainForm()
 {
     static bool WindowActive = true;
     ImGui::SetNextWindowPos(ImVec2(200, 200), ImGuiCond_Once);
-    ImGui::SetNextWindowSize(g_Menu->FormSize);
+    ImGui::SetNextWindowSizeConstraints(g_Menu->FormSize, ImVec2(2560, 1440));
     ImGui::SetNextWindowBgAlpha(1.0f);
-    ImGui::Begin(Xorstr("Anime helper"), &WindowActive, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+    ImGui::Begin(Xorstr("Anime helper"), &WindowActive, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse /*| ImGuiWindowFlags_NoResize*/ | ImGuiWindowFlags_NoScrollbar);
     g_Menu->wp = ImGui::GetWindowPos();
     g_Menu->ws = ImGui::GetWindowSize();
 
@@ -136,13 +136,9 @@ bool FilterString(std::string ourstring, std::string filter)
     {
         int n = lower_our.find(lower_filter, i);
         if (n != std::string::npos)
-        {
             return true;
-        }
         else
-        {
             break;
-        }
     }
     return false;
 }
@@ -168,11 +164,19 @@ void CMenu::SubTabAll()
             continue;
 
         if (ItemLine * 320 < g_Globals->m_flScrollAmount)
+        {
             g_Globals->GetTextureAllAnimeList(i);
+        }
 
         if (ImGui::CustomButtonImage(g_Globals->AllAnimeList.at(i).name.c_str(), g_Globals->AllAnimeList.at(i).desc.c_str(), ImVec2(200, 320), !g_Globals->AllAnimeList.at(i).texture, g_Globals->AllAnimeList.at(i).texture, i))
         {
             g_Server->SaveAnimeList();
+        }
+
+        if (!ImGui::IsItemVisible() && g_Globals->AllAnimeList.at(i).texture)
+        {
+            g_Globals->AllAnimeList.at(i).texture->Release();
+            g_Globals->AllAnimeList.at(i).texture = nullptr;
         }
 
         if (CurrentItemForSameLine >= SameLineMax) {

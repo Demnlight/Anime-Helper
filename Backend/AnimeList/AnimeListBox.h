@@ -42,7 +42,8 @@ public:
 
 
 	bool is_custom = false;
-	PDIRECT3DTEXTURE9 texture = NULL;
+	LPDIRECT3DTEXTURE9 texture = NULL;
+	float m_flTextureReloadDelay = 0.f;
 	int rating = 0;
 
 	int PushAnimeList();
