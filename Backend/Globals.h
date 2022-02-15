@@ -53,6 +53,13 @@ public:
 
 	void ProceedAnimeListAll();
 	void ProceedFavoriteAnime();
+
+	HWND main_hwnd = nullptr;
+	int m_iGlobalWindowPosX = 0;
+	int m_iGlobalWindowPosY = 0;
+	int m_iGlobalWindowSizeX = 0;
+	int m_iGlobalWindowSizeY = 0;
+
 };
 
 inline C_Globals* g_Globals = new C_Globals();

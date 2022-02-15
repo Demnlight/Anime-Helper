@@ -52,19 +52,19 @@ void Drawing()
     // Create application window
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, Xorstr("Anime helper"), NULL };
     RegisterClassEx(&wc);
-    main_hwnd = CreateWindow(wc.lpszClassName, Xorstr("Anime helper"), WS_POPUP, 0, 0, 5, 5, NULL, NULL, wc.hInstance, NULL);
+    //main_hwnd = CreateWindow(wc.lpszClassName, Xorstr("Anime helper"), WS_POPUP, 0, 0, 5, 5, NULL, NULL, wc.hInstance, NULL);
+    g_Globals->main_hwnd = CreateWindowEx(0, wc.lpszClassName, Xorstr("Anime helper"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, wc.hInstance, NULL);
 
     // Initialize Direct3D
-    if (!CreateDeviceD3D(main_hwnd)) {
+    if (!CreateDeviceD3D(g_Globals->main_hwnd)) {
         CleanupDeviceD3D();
         UnregisterClass(wc.lpszClassName, wc.hInstance);
         return;
     }
 
     // Show the window
-    ShowWindow(main_hwnd, SW_HIDE /*SW_HIDE*/);
-    UpdateWindow(main_hwnd);
-
+    ShowWindow(g_Globals->main_hwnd, SW_SHOWDEFAULT /*SW_HIDE*/);
+    UpdateWindow(g_Globals->main_hwnd);
 
     // Setup Dear ImGui context
     ImGui::CreateContext();
@@ -88,7 +88,7 @@ void Drawing()
     }
 
     // Setup Platform/Renderer backends
-    ImGui_ImplWin32_Init(main_hwnd);
+    ImGui_ImplWin32_Init(g_Globals->main_hwnd);
     ImGui_ImplDX9_Init(g_pd3dDevice);
 
     //Load Fonts
@@ -154,7 +154,7 @@ void Drawing()
     ImGui::DestroyContext();
 
     CleanupDeviceD3D();
-    DestroyWindow(main_hwnd);
+    DestroyWindow(g_Globals->main_hwnd);
     UnregisterClass(wc.lpszClassName, wc.hInstance);
 
 #if _DEBUG
@@ -182,20 +182,53 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     return 0;
 }
 
+BOOL WindowResizing(HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    RECT rect = { NULL };
+    GetClientRect(hWnd, &rect);
+
+    // Offered width and height
+    g_Globals->m_iGlobalWindowSizeX = rect.right - rect.left;
+    g_Globals->m_iGlobalWindowSizeY = rect.bottom - rect.top;
+    return true;
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
         return true;
 
     switch (msg)
     {
+    case WM_MOVE:
+    {
+        g_Globals->m_iGlobalWindowPosX = (int)(short)LOWORD(lParam);
+        g_Globals->m_iGlobalWindowPosY = (int)(short)HIWORD(lParam);
+        break;
+    }
+    case WM_GETMINMAXINFO:
+    {
+        LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
+        lpMMI->ptMinTrackSize.x = 1460;
+        lpMMI->ptMinTrackSize.y = 720;
+        break;
+    }
+    //case WM_SIZING:
+    //{
+    //    WindowResizing(hWnd, wParam, lParam);
+    //    break;
+    //}
     case WM_SIZE:
+    {
         if (g_pd3dDevice != NULL && wParam != SIZE_MINIMIZED)
         {
             g_d3dpp.BackBufferWidth = LOWORD(lParam);
             g_d3dpp.BackBufferHeight = HIWORD(lParam);
             ResetDevice();
         }
-        return 0;
+        g_Globals->m_iGlobalWindowSizeX = (int)(short)LOWORD(lParam);
+        g_Globals->m_iGlobalWindowSizeY = (int)(short)HIWORD(lParam);
+    }
+    break;
     case WM_SYSCOMMAND:
         if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
             return 0;

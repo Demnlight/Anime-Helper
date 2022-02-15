@@ -27,6 +27,7 @@ public:
 	void SubTabMy();
 
 	void DrawMainForm();
+	void ResizeImagesByWindowSize();
 
 	bool m_bNeedAnimate = false;
 
@@ -36,6 +37,8 @@ public:
 
 	ImVec2 wp = ImVec2(0, 0);
 	ImVec2 ws = ImVec2(0, 0);
+
+	ImVec2 m_vecImageSize = ImVec2(200, 320);
 };
 
 inline CMenu* g_Menu = new CMenu();

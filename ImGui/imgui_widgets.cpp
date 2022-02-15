@@ -5939,7 +5939,7 @@ bool ImGui::LoadingAnimation(ImVec2 pos, const char* label, float radius, int th
     // Render
     window->DrawList->PathClear();
 
-    int num_segments = 24;
+    int num_segments = 36;
     int start = (int)abs(ImSin((float)g.Time * 1.8f) * (num_segments - 5));
 
     const float a_min = IM_PI * 2.0f * ((float)start) / (float)num_segments;
@@ -6441,7 +6441,7 @@ void ImGui::TabButton(const char* label, int* selected, int num, int total) {
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
 
     PushFont(ImGui::GetIO().Fonts->Fonts[2]);
-    ImVec2 pos = window->Pos + ImVec2(10, 40) + ImVec2(0, (CalcTextSize(label).y + 6) * num);
+    ImVec2 pos = window->Pos + ImVec2(10, 10) + ImVec2(0, (CalcTextSize(label).y + 6) * num);
     ImVec2 size = ImVec2(130, CalcTextSize(label).y + 6);
     PopFont();
 
@@ -6570,7 +6570,7 @@ void ImGui::SubTabButton(const char* label, int* selected, int num, int total) {
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
 
     PushFont(ImGui::GetIO().Fonts->Fonts[2]);
-    ImVec2 pos = window->Pos + ImVec2(10, 110) + ImVec2(0, (CalcTextSize(label).y + 6) * num);
+    ImVec2 pos = window->Pos + ImVec2(10, 80) + ImVec2(0, (CalcTextSize(label).y + 6) * num);
     ImVec2 size = ImVec2(130, CalcTextSize(label).y + 6);
     PopFont();
 

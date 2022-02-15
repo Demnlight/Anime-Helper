@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>../Musor</IntDir>
-    <ExternalIncludePath>E:\1Work\d3d9;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>E:\1Work\d3d9;$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>E:\1Work\d3d9;E:\1Work\opencv\build\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>E:\1Work\d3d9;E:\1Work\opencv\build\x64\vc15\lib;$(LibraryPath)</LibraryPath>
     <TargetName>AnimeHelper</TargetName>
     <OutDir>..\Anime Helper Debug</OutDir>
   </PropertyGroup>

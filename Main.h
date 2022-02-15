@@ -11,7 +11,6 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_internal.h"
 bool loader_active = true;
-HWND main_hwnd = nullptr;
 
 LPDIRECT3DDEVICE9        g_pd3dDevice;
 D3DPRESENT_PARAMETERS    g_d3dpp;

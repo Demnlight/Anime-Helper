@@ -5663,17 +5663,7 @@ void ImGui::RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar
     // As we highlight the title bar when want_focus is set, multiple reappearing windows will have have their title bar highlighted on their reappearing frame.
     const float window_rounding = window->WindowRounding;
     const float window_border_size = window->WindowBorderSize;
-    if (window->Collapsed)
-    {
-        // Title bar only
-        float backup_border_size = style.FrameBorderSize;
-        g.Style.FrameBorderSize = window->WindowBorderSize;
-        ImU32 title_bar_col = GetColorU32((title_bar_is_highlight && !g.NavDisableHighlight) ? ImGuiCol_TitleBgActive : ImGuiCol_TitleBgCollapsed);
-        RenderFrame(title_bar_rect.Min, title_bar_rect.Max, title_bar_col, true, window_rounding);
-        g.Style.FrameBorderSize = backup_border_size;
-    }
-    else
-    {
+    
         // Window background
         if (!(flags & ImGuiWindowFlags_NoBackground))
         {
@@ -5719,9 +5709,6 @@ void ImGui::RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar
             if (!(flags & ImGuiWindowFlags_ChildWindow) && !(flags & ImGuiWindowFlags_Popup) && !(flags & ImGuiWindowFlags_Tooltip))
             {
                 draw->AddRectFilled(ImVec2(wp.x, wp.y), ImVec2(wp.x + ws.x, wp.y + ws.y), ImColor(22, 22, 29, alpha));
-                draw->AddRectFilled(ImVec2(wp.x, wp.y), ImVec2(wp.x + ws.x, wp.y + 30), ImColor(27, 27, 33, alpha));
-                draw->AddLine(ImVec2(wp.x, wp.y + 30), ImVec2(wp.x + ws.x, wp.y + 30), ImColor(100, 100, 100, alpha));
-
                 //Close Button
                 {
                     /*if (IsMouseHoveringRect(ImVec2(wp.x + ws.x - 30, wp.y + 1), ImVec2(wp.x + ws.x - 1, wp.y + 29)))
@@ -5733,8 +5720,8 @@ void ImGui::RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar
                                 exit(0);
                         }
                     }*/
-                    if (CloseButton(window->GetID("#CLOSE"), ImVec2(wp.x + ws.x - 30, wp.y + 5)))
-                        exit(0);
+                    //if (CloseButton(window->GetID("#CLOSE"), ImVec2(wp.x + ws.x - 30, wp.y + 5)))
+                    //    exit(0);
 
                     //draw->AddLine(ImVec2(wp.x + ws.x - 5, wp.y + 25), ImVec2(wp.x + ws.x - 25, wp.y + 5), ImColor(255, 255, 255, alpha));// \ 
                     //draw->AddLine(ImVec2(wp.x + ws.x - 5, wp.y + 5), ImVec2(wp.x + ws.x - 25, wp.y + 25), ImColor(255, 255, 255, alpha));// / 
@@ -5742,16 +5729,11 @@ void ImGui::RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar
 
                 //Tabs
                 {
-                    draw->AddLine(ImVec2(wp.x + 150, wp.y + 30), ImVec2(wp.x + 150, wp.y + ws.y), ImColor(100, 100, 100, alpha));
-                    draw->AddLine(ImVec2(wp.x + 0, wp.y + 100), ImVec2(wp.x + 150, wp.y + 100), ImColor(100, 100, 100, alpha));
+                    draw->AddLine(ImVec2(wp.x + 150, wp.y), ImVec2(wp.x + 150, wp.y + ws.y), ImColor(100, 100, 100, alpha));
+                    draw->AddLine(ImVec2(wp.x + 0, wp.y + 70), ImVec2(wp.x + 150, wp.y + 70), ImColor(100, 100, 100, alpha));
 
-                    draw->AddRectFilled(ImVec2(wp.x + 151, wp.y + 31), ImVec2(wp.x + ws.x, wp.y + ws.y), ImColor(29, 29, 35, alpha));
+                    draw->AddRectFilled(ImVec2(wp.x + 151, wp.y + 1), ImVec2(wp.x + ws.x, wp.y + ws.y), ImColor(29, 29, 35, alpha));
                 }
-
-                PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-                draw->AddText(ImVec2(wp.x + 5, wp.y + 2), ImColor(200, 200, 200, alpha), window->Name);
-                PopFont();
-
                 draw->AddRect(ImVec2(wp.x, wp.y), ImVec2(wp.x + ws.x, wp.y + ws.y), ImColor(100, 100, 100, alpha));
             }
             else {
@@ -5837,7 +5819,7 @@ void ImGui::RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar
         // Borders (for dock node host they will be rendered over after the tab bar)
         //if (handle_borders_and_resize_grips && !window->DockNodeAsHost)
         //    RenderWindowOuterBorders(window);
-    }
+    
 }
 
 // Render title text, collapse button, close button

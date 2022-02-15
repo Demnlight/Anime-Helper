@@ -1,7 +1,6 @@
 #include <iostream>
 #include <windows.h>
 #include <thread>
-
 #include <d3d9.h>
 #pragma comment(lib,"d3d9.lib")
 
@@ -13,11 +12,18 @@
 
 void CMenu::DrawMainForm()
 {
+   /* static int OldWindowSizeX, OldWindowSizeY = 0;
+    if (g_Globals->m_iGlobalWindowSizeX < 700 || g_Globals->m_iGlobalWindowSizeY < 500)
+        SetWindowPos(g_Globals->main_hwnd, 0, g_Globals->m_iGlobalWindowPosX, g_Globals->m_iGlobalWindowPosY, OldWindowSizeX, OldWindowSizeY, 0);
+
+    OldWindowSizeX = g_Globals->m_iGlobalWindowSizeX;
+    OldWindowSizeY = g_Globals->m_iGlobalWindowSizeY;*/
+
     static bool WindowActive = true;
-    ImGui::SetNextWindowPos(ImVec2(200, 200), ImGuiCond_Once);
-    ImGui::SetNextWindowSizeConstraints(g_Menu->FormSize, ImVec2(2560, 1440));
+    ImGui::SetNextWindowPos(ImVec2(g_Globals->m_iGlobalWindowPosX, g_Globals->m_iGlobalWindowPosY));
+    ImGui::SetNextWindowSize(ImVec2(g_Globals->m_iGlobalWindowSizeX, g_Globals->m_iGlobalWindowSizeY));
     ImGui::SetNextWindowBgAlpha(1.0f);
-    ImGui::Begin(Xorstr("Anime helper"), &WindowActive, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse /*| ImGuiWindowFlags_NoResize*/ | ImGuiWindowFlags_NoScrollbar);
+    ImGui::Begin(Xorstr("Anime helper"), &WindowActive, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
     g_Menu->wp = ImGui::GetWindowPos();
     g_Menu->ws = ImGui::GetWindowSize();
 
@@ -145,32 +151,33 @@ bool FilterString(std::string ourstring, std::string filter)
 
 void CMenu::SubTabAll()
 {
-    ImGui::SetNextWindowPos(ImVec2(wp.x + 10, wp.y + 180));
+    ImGui::SetNextWindowPos(ImVec2(wp.x + 10, wp.y + 150));
     ImGui::BeginChild(Xorstr("filtertab"), ImVec2(150, 500));
     static char aNameFilter[128];
     ImGui::InputText(Xorstr("Name Filter"), aNameFilter, 128);
     std::string strNameFilter = aNameFilter;
     ImGui::EndChild();
 
-    ImGui::SetNextWindowPos(ImVec2(wp.x + 160, wp.y + 40));
-    ImGui::BeginChild(Xorstr("all anime"), ImVec2(ws.x - 160, ws.y - 40));
+    ImGui::SetNextWindowPos(ImVec2(wp.x + 160, wp.y + 10));
+    ImGui::BeginChild(Xorstr("all anime"), ImVec2(ws.x - 160, ws.y - 10));
 
     int CurrentItemForSameLine = 1;
-    int ItemLine = -3;
+   
+    g_Menu->ResizeImagesByWindowSize();
 
     for (int i = 0; i < g_Globals->AllAnimeList.size(); i++)
     {
         if (!FilterString(g_Globals->AllAnimeList.at(i).name, strNameFilter) && strNameFilter.size() > 0)
             continue;
 
-        if (ItemLine * 320 < g_Globals->m_flScrollAmount)
-        {
-            g_Globals->GetTextureAllAnimeList(i);
-        }
-
-        if (ImGui::CustomButtonImage(g_Globals->AllAnimeList.at(i).name.c_str(), g_Globals->AllAnimeList.at(i).desc.c_str(), ImVec2(200, 320), !g_Globals->AllAnimeList.at(i).texture, g_Globals->AllAnimeList.at(i).texture, i))
+        if (ImGui::CustomButtonImage(g_Globals->AllAnimeList.at(i).name.c_str(), g_Globals->AllAnimeList.at(i).desc.c_str(), m_vecImageSize, !g_Globals->AllAnimeList.at(i).texture, g_Globals->AllAnimeList.at(i).texture, i))
         {
             g_Server->SaveAnimeList();
+        }
+
+        if (ImGui::IsItemVisible() && !g_Globals->AllAnimeList.at(i).texture)
+        {
+            g_Globals->GetTextureAllAnimeList(i);
         }
 
         if (!ImGui::IsItemVisible() && g_Globals->AllAnimeList.at(i).texture)
@@ -179,9 +186,8 @@ void CMenu::SubTabAll()
             g_Globals->AllAnimeList.at(i).texture = nullptr;
         }
 
-        if (CurrentItemForSameLine >= SameLineMax) {
+        if (CurrentItemForSameLine >= g_Menu->SameLineMax) {
             CurrentItemForSameLine = 1;
-            ItemLine++;
         }
         else {
             CurrentItemForSameLine++;
@@ -212,21 +218,29 @@ void CMenu::SubTabMy()
     ImGui::BeginChild(Xorstr("Favorites"), ImVec2(ws.x - 160, ws.y - 40));
 
     int CurrentItemForSameLine = 1;
-    int ItemLine = -3;
+
+    g_Menu->ResizeImagesByWindowSize();
 
     for (int i = 0; i < g_Globals->AnimeFavorites.size(); i++)
     {
-        if (ItemLine * 320 < g_Globals->m_flScrollAmount)
-            g_Globals->GetTextureFavotites(i);
-
-        if (ImGui::CustomButtonImage(g_Globals->AnimeFavorites.at(i).name.c_str(), g_Globals->AnimeFavorites.at(i).desc.c_str(), ImVec2(200, 320), !g_Globals->AnimeFavorites.at(i).texture, g_Globals->AnimeFavorites.at(i).texture, i, 1))
+        if (ImGui::CustomButtonImage(g_Globals->AnimeFavorites.at(i).name.c_str(), g_Globals->AnimeFavorites.at(i).desc.c_str(), m_vecImageSize, !g_Globals->AnimeFavorites.at(i).texture, g_Globals->AnimeFavorites.at(i).texture, i, 1))
         {
-            //ProgressTab = 1;
             CurrentSelectedName = g_Globals->AnimeFavorites.at(i).name;
             g_Server->SaveAnimeList();
         }
+        
+        if (ImGui::IsItemVisible() && !g_Globals->AnimeFavorites.at(i).texture)
+        {
+            g_Globals->GetTextureFavotites(i);
+        }
 
-        if (CurrentItemForSameLine >= SameLineMax) {
+        if (!ImGui::IsItemVisible() && g_Globals->AnimeFavorites.at(i).texture)
+        {
+            g_Globals->AnimeFavorites.at(i).texture->Release();
+            g_Globals->AnimeFavorites.at(i).texture = nullptr;
+        }
+
+        if (CurrentItemForSameLine >= g_Menu->SameLineMax) {
             CurrentItemForSameLine = 1;
         }
         else {
@@ -235,4 +249,30 @@ void CMenu::SubTabMy()
         }
     }
     ImGui::EndChild();
+}
+
+void CMenu::ResizeImagesByWindowSize()
+{
+    ImVec2 m_vecImageMinSize = ImVec2(200, 320);//1,6
+    ImVec2 m_vecImageMaxSize = ImVec2(250, 400);
+    ImVec2 m_vecChildSize = ImGui::GetWindowSize();
+    ImVec2 m_vecComfortImageSize = ImVec2((ImGui::GetWindowSize().x - 7 * (g_Menu->SameLineMax + 1)) / g_Menu->SameLineMax, (ImGui::GetWindowSize().x - 7 * (g_Menu->SameLineMax + 1)) / g_Menu->SameLineMax * 1.6f);
+
+    if (m_vecComfortImageSize.x > m_vecImageMaxSize.x)
+    {
+        g_Menu->m_vecImageSize = m_vecImageMaxSize;
+        g_Menu->SameLineMax += 1;
+    }
+    else
+    {
+        if (m_vecComfortImageSize.x > m_vecImageMinSize.x)
+        {
+            g_Menu->m_vecImageSize = m_vecComfortImageSize;
+        }
+        else
+        {
+            g_Menu->SameLineMax -= 1;
+            g_Menu->m_vecImageSize = m_vecImageMinSize;
+        }
+    }
 }
