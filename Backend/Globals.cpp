@@ -175,3 +175,8 @@ void C_Globals::GetTextureFavotites(int index)
     if (!ARRAY_SEARCH(this->QueueFavorite, index) && !g_Globals->AnimeFavorites.at(index).texture)
         this->QueueFavorite.emplace_back(index);
 }
+
+std::string C_Globals::GetAnimeUrl(std::vector<AnimeList>* arr, int index)
+{
+    return Xorstr("https://animego.org/anime/") + arr->at(index).site_url;
+}

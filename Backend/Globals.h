@@ -31,6 +31,8 @@ public:
 	void Init();
 	void CheckVersion();
 	void FormatAnimeName(std::vector<AnimeList>* arr);
+	std::string GetAnimeUrl(std::vector<AnimeList>* arr, int index);
+
 	int FindInMainArrayIndexByName(std::string label, std::vector<AnimeList> arr);
 	int GenerateAnimeIndexByName(std::string label);
 

@@ -6171,8 +6171,7 @@ bool ImGui::CustomButtonImage(const char* label, const char* desc, const ImVec2&
         {
             if (ImGui::Selectable(Xorstr("Add to my anime list")))
             {
-                static bool add = true;
-                add = true;
+                bool add = true;
 
                 for (int i = 0; i < g_Globals->AnimeFavorites.size(); i++)
                     if (strcmp(g_Globals->AnimeFavorites.at(i).name.c_str(), label) == 0)
@@ -6185,28 +6184,9 @@ bool ImGui::CustomButtonImage(const char* label, const char* desc, const ImVec2&
                 {
                     AnimeList anime;
                     anime.name = label;
-                    //anime.index = g_Globals->AllAnimeList.at(index).index;
-                    anime.desc = g_Globals->AllAnimeList.at(index).desc;
-                    anime.rating = g_Globals->AllAnimeList.at(index).rating;
+                    //anime.desc = g_Globals->AllAnimeList.at(index).desc;
                     anime.image_url = g_Globals->AllAnimeList.at(index).image_url;
-                    anime.status = g_Globals->AllAnimeList.at(index).status;
-                    anime.genre = g_Globals->AllAnimeList.at(index).genre;
-                    anime.type = g_Globals->AllAnimeList.at(index).type;
-                    anime.original_source = g_Globals->AllAnimeList.at(index).original_source;
-                    anime.last_season_date_release = g_Globals->AllAnimeList.at(index).last_season_date_release;
-                    anime.start_and_end_date = g_Globals->AllAnimeList.at(index).start_and_end_date;
-                    anime.studio = g_Globals->AllAnimeList.at(index).studio;
-                    anime.MPAA_rating = g_Globals->AllAnimeList.at(index).MPAA_rating;
-                    anime.age_restrictions = g_Globals->AllAnimeList.at(index).age_restrictions;
-                    anime.average_part_duration = g_Globals->AllAnimeList.at(index).average_part_duration;
-                    anime.ranobe_manga = g_Globals->AllAnimeList.at(index).ranobe_manga;
-
-
-                    anime.last_season_saw = g_Globals->AllAnimeList.at(index).last_season_saw;
-                    anime.last_series_saw = g_Globals->AllAnimeList.at(index).last_series_saw;
-                    anime.last_time_saw = g_Globals->AllAnimeList.at(index).last_time_saw;
-                    anime.link_for_watching = g_Globals->AllAnimeList.at(index).link_for_watching;
-
+                    anime.site_url = g_Globals->AllAnimeList.at(index).site_url;
 
                     g_Globals->AnimeFavorites.push_back(anime);
                     g_Server->SaveAnimeList();

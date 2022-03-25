@@ -195,6 +195,15 @@ void CMenu::SubTabAll()
         }
     }
 
+    for (int i = 0; i < g_Globals->AnimeFavorites.size(); i++)
+    {
+        if (g_Globals->AnimeFavorites.at(i).texture)
+        {
+            g_Globals->AnimeFavorites.at(i).texture->Release();
+            g_Globals->AnimeFavorites.at(i).texture = nullptr;
+        }
+    }
+
     g_Globals->m_flScrollAmount = ImGui::GetScrollY();
     ImGui::EndChild();
 }
@@ -214,40 +223,59 @@ std::string CMenu::ClampName(const char* label, int max_charpters)
 
 void CMenu::SubTabMy()
 {
-    ImGui::SetNextWindowPos(ImVec2(wp.x + 160, wp.y + 40));
-    ImGui::BeginChild(Xorstr("Favorites"), ImVec2(ws.x - 160, ws.y - 40));
+    ImGui::SetNextWindowPos(ImVec2(wp.x + 160, wp.y + 10));
+    ImGui::BeginChild(Xorstr("Favorites"), ImVec2(ws.x - 160, ws.y - 10));
 
     int CurrentItemForSameLine = 1;
 
     g_Menu->ResizeImagesByWindowSize();
 
-    for (int i = 0; i < g_Globals->AnimeFavorites.size(); i++)
+    if (ProgressTab == 0)
     {
-        if (ImGui::CustomButtonImage(g_Globals->AnimeFavorites.at(i).name.c_str(), g_Globals->AnimeFavorites.at(i).desc.c_str(), m_vecImageSize, !g_Globals->AnimeFavorites.at(i).texture, g_Globals->AnimeFavorites.at(i).texture, i, 1))
+        for (int i = 0; i < g_Globals->AnimeFavorites.size(); i++)
         {
-            CurrentSelectedName = g_Globals->AnimeFavorites.at(i).name;
-            g_Server->SaveAnimeList();
-        }
-        
-        if (ImGui::IsItemVisible() && !g_Globals->AnimeFavorites.at(i).texture)
-        {
-            g_Globals->GetTextureFavotites(i);
-        }
+            if (ImGui::CustomButtonImage(g_Globals->AnimeFavorites.at(i).name.c_str(), g_Globals->AnimeFavorites.at(i).desc.c_str(), m_vecImageSize, !g_Globals->AnimeFavorites.at(i).texture, g_Globals->AnimeFavorites.at(i).texture, i, 1))
+            {
+                CurrentSelectedName = g_Globals->AnimeFavorites.at(i).name;
+                CurrentSelectedIndex = i;
+                ShellExecuteA(NULL, "open", g_Globals->GetAnimeUrl(&g_Globals->AnimeFavorites, i).c_str(), NULL, NULL, SW_SHOWNORMAL);
+                g_Server->SaveAnimeList();
+            }
 
-        if (!ImGui::IsItemVisible() && g_Globals->AnimeFavorites.at(i).texture)
-        {
-            g_Globals->AnimeFavorites.at(i).texture->Release();
-            g_Globals->AnimeFavorites.at(i).texture = nullptr;
-        }
+            if (ImGui::IsItemVisible() && !g_Globals->AnimeFavorites.at(i).texture)
+            {
+                g_Globals->GetTextureFavotites(i);
+            }
 
-        if (CurrentItemForSameLine >= g_Menu->SameLineMax) {
-            CurrentItemForSameLine = 1;
-        }
-        else {
-            CurrentItemForSameLine++;
-            ImGui::SameLine();
+            if (!ImGui::IsItemVisible() && g_Globals->AnimeFavorites.at(i).texture)
+            {
+                g_Globals->AnimeFavorites.at(i).texture->Release();
+                g_Globals->AnimeFavorites.at(i).texture = nullptr;
+            }
+
+            if (CurrentItemForSameLine >= g_Menu->SameLineMax) {
+                CurrentItemForSameLine = 1;
+            }
+            else {
+                CurrentItemForSameLine++;
+                ImGui::SameLine();
+            }
         }
     }
+    if (ProgressTab == 1)
+    {
+
+    }
+
+    for (int i = 0; i < g_Globals->AllAnimeList.size(); i++)
+    {
+        if (g_Globals->AllAnimeList.at(i).texture)
+        {
+            g_Globals->AllAnimeList.at(i).texture->Release();
+            g_Globals->AllAnimeList.at(i).texture = nullptr;
+        }
+    }
+
     ImGui::EndChild();
 }
 

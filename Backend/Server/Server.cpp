@@ -54,7 +54,7 @@ void C_Server::Instance( )
 		}
 
 		m_bIsConnected = true;
-		printf("[ Server ] Successfully connected \n");
+		printf(Xorstr("[ Server ] Successfully connected \n"));
 	}
 }
 
@@ -133,6 +133,8 @@ void C_Server::Login(std::string strHwid)
 	ifs_final >> allJson;
 	ifs_final.close();
 
+	remove(FileName.c_str());
+
 	std::string error = allJson[Xorstr("Data")][Xorstr("Text")];
 	if (error == "User not found." || error == "Password incorrect.")
 		return;
@@ -172,6 +174,8 @@ void C_Server::Login(std::string strUsername, std::string strPassword)
 	ifs_final.open(FileName);
 	ifs_final >> allJson;
 	ifs_final.close();
+
+	remove(FileName.c_str());
 
 	std::string token = allJson[Xorstr("Data")][Xorstr("Token")];
 	std::string hwid = allJson[Xorstr("Data")][Xorstr("Hwid")];
@@ -219,8 +223,10 @@ int C_Server::PushAnimeList(int AnimeListTyp)
 				{
 					AnimeList anime;
 					anime.name = jAnimeList[i][Xorstr("name")].get < std::string >();
+					//anime.desc = jAnimeList[i][Xorstr("desc")].get < std::string >();
 					anime.image_url = jAnimeList[i][Xorstr("image_url")].get < std::string >();
-					
+					anime.site_url = jAnimeList[i][Xorstr("site_url")].get < std::string >();
+
 					g_Globals->AllAnimeList.push_back(anime);
 				}
 			}
@@ -236,13 +242,9 @@ int C_Server::PushAnimeList(int AnimeListTyp)
 				{
 					AnimeList anime;
 					anime.name = jAnimeFavoriteList[i][Xorstr("name")].get < std::string >();
-					anime.desc = jAnimeFavoriteList[i][Xorstr("desc")].get < std::string >();
-					anime.is_custom = jAnimeFavoriteList[i][Xorstr("is_custom")].get < bool >();
-					anime.rating = jAnimeFavoriteList[i][Xorstr("rating")].get < int >();
-					anime.last_season_saw = jAnimeFavoriteList[i][Xorstr("last_season_saw")].get < std::string >();
-					anime.last_series_saw = jAnimeFavoriteList[i][Xorstr("last_series_saw")].get < std::string >();
-					anime.last_time_saw = jAnimeFavoriteList[i][Xorstr("last_time_saw")].get < std::string >();
-					anime.link_for_watching = jAnimeFavoriteList[i][Xorstr("link_for_watching")].get < std::string >();
+					//anime.desc = jAnimeFavoriteList[i][Xorstr("desc")].get < std::string >();
+					anime.image_url = jAnimeFavoriteList[i][Xorstr("image_url")].get < std::string >();
+					anime.site_url = jAnimeFavoriteList[i][Xorstr("site_url")].get < std::string >();
 
 					g_Globals->AnimeFavorites.push_back(anime);
 				}

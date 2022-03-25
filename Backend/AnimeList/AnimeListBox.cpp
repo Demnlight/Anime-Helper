@@ -21,14 +21,8 @@ void AnimeList::SaveAnimeList()
 	{
 		auto it = g_Globals->AnimeFavorites.at(i);
 		jAnimeFavoriteList[i][Xorstr("name")] = it.name;
-		jAnimeFavoriteList[i][Xorstr("is_custom")] = it.is_custom;
-		jAnimeFavoriteList[i][Xorstr("desc")] = it.desc;
-		jAnimeFavoriteList[i][Xorstr("rating")] = it.rating;
-		jAnimeFavoriteList[i][Xorstr("last_season_saw")] = it.last_season_saw;
-		jAnimeFavoriteList[i][Xorstr("last_series_saw")] = it.last_series_saw;
-		jAnimeFavoriteList[i][Xorstr("last_time_saw")] = it.last_time_saw;
-		jAnimeFavoriteList[i][Xorstr("link_for_watching")] = it.link_for_watching;
-
+		jAnimeFavoriteList[i][Xorstr("image_url")] = it.image_url;
+		jAnimeFavoriteList[i][Xorstr("site_url")] = it.site_url;
 		jAnimeFavoriteList[i][Xorstr("size")] = g_Globals->AnimeFavorites.size();
 	}
 
